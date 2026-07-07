@@ -1,0 +1,11 @@
+# Initialize the kernel (Mandatory)
+/run/initialize
+
+# Set your production cuts for secondaries
+/run/setCut 1 um
+
+# (Optional) Log every 100 events so you know it hasn't frozen
+/run/printProgress 100
+
+# Start the simulation (3.12 MeV electrons)
+/run/beamOn 1000

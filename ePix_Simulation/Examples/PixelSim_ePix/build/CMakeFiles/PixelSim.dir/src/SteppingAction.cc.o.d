@@ -1,9 +1,9 @@
 CMakeFiles/PixelSim.dir/src/SteppingAction.cc.o: \
- /sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix-Copy1/src/SteppingAction.cc \
+ /sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix/src/SteppingAction.cc \
  /sdf/home/d/dhruvshr/miniconda3/envs/ePix_sim/x86_64-conda-linux-gnu/sysroot/usr/include/stdc-predef.h \
- /sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix-Copy1/include/SteppingAction.hh \
+ /sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix/include/SteppingAction.hh \
  /sdf/home/d/dhruvshr/miniconda3/envs/ePix_sim/include/Geant4/G4UserSteppingAction.hh \
- /sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix-Copy1/include/EventAction.hh \
+ /sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix/include/EventAction.hh \
  /sdf/home/d/dhruvshr/miniconda3/envs/ePix_sim/include/Geant4/G4UserEventAction.hh \
  /sdf/home/d/dhruvshr/miniconda3/envs/ePix_sim/include/Geant4/globals.hh \
  /sdf/home/d/dhruvshr/miniconda3/envs/ePix_sim/include/Geant4/G4ios.hh \
@@ -288,7 +288,7 @@ CMakeFiles/PixelSim.dir/src/SteppingAction.cc.o: \
  /sdf/home/d/dhruvshr/miniconda3/envs/ePix_sim/lib/gcc/x86_64-conda-linux-gnu/15.2.0/include/c++/set \
  /sdf/home/d/dhruvshr/miniconda3/envs/ePix_sim/lib/gcc/x86_64-conda-linux-gnu/15.2.0/include/c++/bits/stl_set.h \
  /sdf/home/d/dhruvshr/miniconda3/envs/ePix_sim/lib/gcc/x86_64-conda-linux-gnu/15.2.0/include/c++/bits/stl_multiset.h \
- /sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix-Copy1/include/DetectorConstruction.hh \
+ /sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix/include/DetectorConstruction.hh \
  /sdf/home/d/dhruvshr/miniconda3/envs/ePix_sim/include/Geant4/G4VUserDetectorConstruction.hh \
  /sdf/home/d/dhruvshr/miniconda3/envs/ePix_sim/include/Geant4/globals.hh \
  /sdf/home/d/dhruvshr/miniconda3/envs/ePix_sim/include/Geant4/G4Step.hh \

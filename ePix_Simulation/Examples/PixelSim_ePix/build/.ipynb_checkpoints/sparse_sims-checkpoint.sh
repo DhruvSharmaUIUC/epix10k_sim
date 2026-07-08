@@ -6,7 +6,7 @@ cd ~/ePix_Simulation/Examples/PixelSim_ePix/build
 
 OUTPUT_DIR="../outputs"
 N_RUNS=2
-ELECS_PER_RUN=1000
+ELECS_PER_RUN=5000
 
 mkdir -p "${OUTPUT_DIR}"
 mkdir -p "./macros"

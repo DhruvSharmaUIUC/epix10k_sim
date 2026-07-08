@@ -48,19 +48,19 @@ cmake_force:
 SHELL = /bin/sh
 
 # The CMake executable.
-CMAKE_COMMAND = /sdf/home/d/dhruvshr/miniconda3/envs/ePix_sim/bin/cmake
+CMAKE_COMMAND = /sdf/home/d/dhruvshr/miniconda3/bin/cmake
 
 # The command to remove a file.
-RM = /sdf/home/d/dhruvshr/miniconda3/envs/ePix_sim/bin/cmake -E rm -f
+RM = /sdf/home/d/dhruvshr/miniconda3/bin/cmake -E rm -f
 
 # Escaping for special characters.
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix-Copy1
+CMAKE_SOURCE_DIR = /sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix-Copy1/build
+CMAKE_BINARY_DIR = /sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix/build
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -78,7 +78,7 @@ edit_cache/fast: edit_cache
 # Special rule for the target rebuild_cache
 rebuild_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Running CMake to regenerate build system..."
-	/sdf/home/d/dhruvshr/miniconda3/envs/ePix_sim/bin/cmake --regenerate-during-build -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
+	/sdf/home/d/dhruvshr/miniconda3/bin/cmake --regenerate-during-build -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
 .PHONY : rebuild_cache
 
 # Special rule for the target rebuild_cache
@@ -87,9 +87,9 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix-Copy1/build/CMakeFiles /sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix-Copy1/build//CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix/build/CMakeFiles /sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix/build//CMakeFiles/progress.marks
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix-Copy1/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target

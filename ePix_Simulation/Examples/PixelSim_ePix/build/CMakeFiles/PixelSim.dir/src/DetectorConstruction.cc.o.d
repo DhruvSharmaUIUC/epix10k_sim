@@ -1,7 +1,7 @@
 CMakeFiles/PixelSim.dir/src/DetectorConstruction.cc.o: \
- /sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix-Copy1/src/DetectorConstruction.cc \
+ /sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix/src/DetectorConstruction.cc \
  /sdf/home/d/dhruvshr/miniconda3/envs/ePix_sim/x86_64-conda-linux-gnu/sysroot/usr/include/stdc-predef.h \
- /sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix-Copy1/include/DetectorConstruction.hh \
+ /sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix/include/DetectorConstruction.hh \
  /sdf/home/d/dhruvshr/miniconda3/envs/ePix_sim/include/Geant4/G4VUserDetectorConstruction.hh \
  /sdf/home/d/dhruvshr/miniconda3/envs/ePix_sim/include/Geant4/globals.hh \
  /sdf/home/d/dhruvshr/miniconda3/envs/ePix_sim/include/Geant4/G4ios.hh \

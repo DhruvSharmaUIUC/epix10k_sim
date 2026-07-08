@@ -44,19 +44,19 @@ cmake_force:
 SHELL = /bin/sh
 
 # The CMake executable.
-CMAKE_COMMAND = /sdf/home/d/dhruvshr/miniconda3/envs/ePix_sim/bin/cmake
+CMAKE_COMMAND = /sdf/home/d/dhruvshr/miniconda3/bin/cmake
 
 # The command to remove a file.
-RM = /sdf/home/d/dhruvshr/miniconda3/envs/ePix_sim/bin/cmake -E rm -f
+RM = /sdf/home/d/dhruvshr/miniconda3/bin/cmake -E rm -f
 
 # Escaping for special characters.
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix-Copy1
+CMAKE_SOURCE_DIR = /sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix-Copy1/build
+CMAKE_BINARY_DIR = /sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix/build
 
 # Include any dependencies generated for this target.
 include CMakeFiles/PixelSim.dir/depend.make
@@ -73,102 +73,102 @@ CMakeFiles/PixelSim.dir/codegen:
 .PHONY : CMakeFiles/PixelSim.dir/codegen
 
 CMakeFiles/PixelSim.dir/PixelSim.cc.o: CMakeFiles/PixelSim.dir/flags.make
-CMakeFiles/PixelSim.dir/PixelSim.cc.o: /sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix-Copy1/PixelSim.cc
+CMakeFiles/PixelSim.dir/PixelSim.cc.o: /sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix/PixelSim.cc
 CMakeFiles/PixelSim.dir/PixelSim.cc.o: CMakeFiles/PixelSim.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix-Copy1/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/PixelSim.dir/PixelSim.cc.o"
-	/sdf/home/d/dhruvshr/miniconda3/envs/ePix_sim/bin/x86_64-conda-linux-gnu-c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/PixelSim.dir/PixelSim.cc.o -MF CMakeFiles/PixelSim.dir/PixelSim.cc.o.d -o CMakeFiles/PixelSim.dir/PixelSim.cc.o -c /sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix-Copy1/PixelSim.cc
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/PixelSim.dir/PixelSim.cc.o"
+	/sdf/home/d/dhruvshr/miniconda3/envs/ePix_sim/bin/x86_64-conda-linux-gnu-c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/PixelSim.dir/PixelSim.cc.o -MF CMakeFiles/PixelSim.dir/PixelSim.cc.o.d -o CMakeFiles/PixelSim.dir/PixelSim.cc.o -c /sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix/PixelSim.cc
 
 CMakeFiles/PixelSim.dir/PixelSim.cc.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/PixelSim.dir/PixelSim.cc.i"
-	/sdf/home/d/dhruvshr/miniconda3/envs/ePix_sim/bin/x86_64-conda-linux-gnu-c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix-Copy1/PixelSim.cc > CMakeFiles/PixelSim.dir/PixelSim.cc.i
+	/sdf/home/d/dhruvshr/miniconda3/envs/ePix_sim/bin/x86_64-conda-linux-gnu-c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix/PixelSim.cc > CMakeFiles/PixelSim.dir/PixelSim.cc.i
 
 CMakeFiles/PixelSim.dir/PixelSim.cc.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/PixelSim.dir/PixelSim.cc.s"
-	/sdf/home/d/dhruvshr/miniconda3/envs/ePix_sim/bin/x86_64-conda-linux-gnu-c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix-Copy1/PixelSim.cc -o CMakeFiles/PixelSim.dir/PixelSim.cc.s
+	/sdf/home/d/dhruvshr/miniconda3/envs/ePix_sim/bin/x86_64-conda-linux-gnu-c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix/PixelSim.cc -o CMakeFiles/PixelSim.dir/PixelSim.cc.s
 
 CMakeFiles/PixelSim.dir/src/ActionInitialization.cc.o: CMakeFiles/PixelSim.dir/flags.make
-CMakeFiles/PixelSim.dir/src/ActionInitialization.cc.o: /sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix-Copy1/src/ActionInitialization.cc
+CMakeFiles/PixelSim.dir/src/ActionInitialization.cc.o: /sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix/src/ActionInitialization.cc
 CMakeFiles/PixelSim.dir/src/ActionInitialization.cc.o: CMakeFiles/PixelSim.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix-Copy1/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/PixelSim.dir/src/ActionInitialization.cc.o"
-	/sdf/home/d/dhruvshr/miniconda3/envs/ePix_sim/bin/x86_64-conda-linux-gnu-c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/PixelSim.dir/src/ActionInitialization.cc.o -MF CMakeFiles/PixelSim.dir/src/ActionInitialization.cc.o.d -o CMakeFiles/PixelSim.dir/src/ActionInitialization.cc.o -c /sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix-Copy1/src/ActionInitialization.cc
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/PixelSim.dir/src/ActionInitialization.cc.o"
+	/sdf/home/d/dhruvshr/miniconda3/envs/ePix_sim/bin/x86_64-conda-linux-gnu-c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/PixelSim.dir/src/ActionInitialization.cc.o -MF CMakeFiles/PixelSim.dir/src/ActionInitialization.cc.o.d -o CMakeFiles/PixelSim.dir/src/ActionInitialization.cc.o -c /sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix/src/ActionInitialization.cc
 
 CMakeFiles/PixelSim.dir/src/ActionInitialization.cc.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/PixelSim.dir/src/ActionInitialization.cc.i"
-	/sdf/home/d/dhruvshr/miniconda3/envs/ePix_sim/bin/x86_64-conda-linux-gnu-c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix-Copy1/src/ActionInitialization.cc > CMakeFiles/PixelSim.dir/src/ActionInitialization.cc.i
+	/sdf/home/d/dhruvshr/miniconda3/envs/ePix_sim/bin/x86_64-conda-linux-gnu-c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix/src/ActionInitialization.cc > CMakeFiles/PixelSim.dir/src/ActionInitialization.cc.i
 
 CMakeFiles/PixelSim.dir/src/ActionInitialization.cc.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/PixelSim.dir/src/ActionInitialization.cc.s"
-	/sdf/home/d/dhruvshr/miniconda3/envs/ePix_sim/bin/x86_64-conda-linux-gnu-c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix-Copy1/src/ActionInitialization.cc -o CMakeFiles/PixelSim.dir/src/ActionInitialization.cc.s
+	/sdf/home/d/dhruvshr/miniconda3/envs/ePix_sim/bin/x86_64-conda-linux-gnu-c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix/src/ActionInitialization.cc -o CMakeFiles/PixelSim.dir/src/ActionInitialization.cc.s
 
 CMakeFiles/PixelSim.dir/src/DetectorConstruction.cc.o: CMakeFiles/PixelSim.dir/flags.make
-CMakeFiles/PixelSim.dir/src/DetectorConstruction.cc.o: /sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix-Copy1/src/DetectorConstruction.cc
+CMakeFiles/PixelSim.dir/src/DetectorConstruction.cc.o: /sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix/src/DetectorConstruction.cc
 CMakeFiles/PixelSim.dir/src/DetectorConstruction.cc.o: CMakeFiles/PixelSim.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix-Copy1/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/PixelSim.dir/src/DetectorConstruction.cc.o"
-	/sdf/home/d/dhruvshr/miniconda3/envs/ePix_sim/bin/x86_64-conda-linux-gnu-c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/PixelSim.dir/src/DetectorConstruction.cc.o -MF CMakeFiles/PixelSim.dir/src/DetectorConstruction.cc.o.d -o CMakeFiles/PixelSim.dir/src/DetectorConstruction.cc.o -c /sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix-Copy1/src/DetectorConstruction.cc
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/PixelSim.dir/src/DetectorConstruction.cc.o"
+	/sdf/home/d/dhruvshr/miniconda3/envs/ePix_sim/bin/x86_64-conda-linux-gnu-c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/PixelSim.dir/src/DetectorConstruction.cc.o -MF CMakeFiles/PixelSim.dir/src/DetectorConstruction.cc.o.d -o CMakeFiles/PixelSim.dir/src/DetectorConstruction.cc.o -c /sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix/src/DetectorConstruction.cc
 
 CMakeFiles/PixelSim.dir/src/DetectorConstruction.cc.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/PixelSim.dir/src/DetectorConstruction.cc.i"
-	/sdf/home/d/dhruvshr/miniconda3/envs/ePix_sim/bin/x86_64-conda-linux-gnu-c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix-Copy1/src/DetectorConstruction.cc > CMakeFiles/PixelSim.dir/src/DetectorConstruction.cc.i
+	/sdf/home/d/dhruvshr/miniconda3/envs/ePix_sim/bin/x86_64-conda-linux-gnu-c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix/src/DetectorConstruction.cc > CMakeFiles/PixelSim.dir/src/DetectorConstruction.cc.i
 
 CMakeFiles/PixelSim.dir/src/DetectorConstruction.cc.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/PixelSim.dir/src/DetectorConstruction.cc.s"
-	/sdf/home/d/dhruvshr/miniconda3/envs/ePix_sim/bin/x86_64-conda-linux-gnu-c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix-Copy1/src/DetectorConstruction.cc -o CMakeFiles/PixelSim.dir/src/DetectorConstruction.cc.s
+	/sdf/home/d/dhruvshr/miniconda3/envs/ePix_sim/bin/x86_64-conda-linux-gnu-c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix/src/DetectorConstruction.cc -o CMakeFiles/PixelSim.dir/src/DetectorConstruction.cc.s
 
 CMakeFiles/PixelSim.dir/src/EventAction.cc.o: CMakeFiles/PixelSim.dir/flags.make
-CMakeFiles/PixelSim.dir/src/EventAction.cc.o: /sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix-Copy1/src/EventAction.cc
+CMakeFiles/PixelSim.dir/src/EventAction.cc.o: /sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix/src/EventAction.cc
 CMakeFiles/PixelSim.dir/src/EventAction.cc.o: CMakeFiles/PixelSim.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix-Copy1/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/PixelSim.dir/src/EventAction.cc.o"
-	/sdf/home/d/dhruvshr/miniconda3/envs/ePix_sim/bin/x86_64-conda-linux-gnu-c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/PixelSim.dir/src/EventAction.cc.o -MF CMakeFiles/PixelSim.dir/src/EventAction.cc.o.d -o CMakeFiles/PixelSim.dir/src/EventAction.cc.o -c /sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix-Copy1/src/EventAction.cc
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/PixelSim.dir/src/EventAction.cc.o"
+	/sdf/home/d/dhruvshr/miniconda3/envs/ePix_sim/bin/x86_64-conda-linux-gnu-c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/PixelSim.dir/src/EventAction.cc.o -MF CMakeFiles/PixelSim.dir/src/EventAction.cc.o.d -o CMakeFiles/PixelSim.dir/src/EventAction.cc.o -c /sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix/src/EventAction.cc
 
 CMakeFiles/PixelSim.dir/src/EventAction.cc.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/PixelSim.dir/src/EventAction.cc.i"
-	/sdf/home/d/dhruvshr/miniconda3/envs/ePix_sim/bin/x86_64-conda-linux-gnu-c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix-Copy1/src/EventAction.cc > CMakeFiles/PixelSim.dir/src/EventAction.cc.i
+	/sdf/home/d/dhruvshr/miniconda3/envs/ePix_sim/bin/x86_64-conda-linux-gnu-c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix/src/EventAction.cc > CMakeFiles/PixelSim.dir/src/EventAction.cc.i
 
 CMakeFiles/PixelSim.dir/src/EventAction.cc.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/PixelSim.dir/src/EventAction.cc.s"
-	/sdf/home/d/dhruvshr/miniconda3/envs/ePix_sim/bin/x86_64-conda-linux-gnu-c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix-Copy1/src/EventAction.cc -o CMakeFiles/PixelSim.dir/src/EventAction.cc.s
+	/sdf/home/d/dhruvshr/miniconda3/envs/ePix_sim/bin/x86_64-conda-linux-gnu-c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix/src/EventAction.cc -o CMakeFiles/PixelSim.dir/src/EventAction.cc.s
 
 CMakeFiles/PixelSim.dir/src/PrimaryGeneratorAction.cc.o: CMakeFiles/PixelSim.dir/flags.make
-CMakeFiles/PixelSim.dir/src/PrimaryGeneratorAction.cc.o: /sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix-Copy1/src/PrimaryGeneratorAction.cc
+CMakeFiles/PixelSim.dir/src/PrimaryGeneratorAction.cc.o: /sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix/src/PrimaryGeneratorAction.cc
 CMakeFiles/PixelSim.dir/src/PrimaryGeneratorAction.cc.o: CMakeFiles/PixelSim.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix-Copy1/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/PixelSim.dir/src/PrimaryGeneratorAction.cc.o"
-	/sdf/home/d/dhruvshr/miniconda3/envs/ePix_sim/bin/x86_64-conda-linux-gnu-c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/PixelSim.dir/src/PrimaryGeneratorAction.cc.o -MF CMakeFiles/PixelSim.dir/src/PrimaryGeneratorAction.cc.o.d -o CMakeFiles/PixelSim.dir/src/PrimaryGeneratorAction.cc.o -c /sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix-Copy1/src/PrimaryGeneratorAction.cc
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/PixelSim.dir/src/PrimaryGeneratorAction.cc.o"
+	/sdf/home/d/dhruvshr/miniconda3/envs/ePix_sim/bin/x86_64-conda-linux-gnu-c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/PixelSim.dir/src/PrimaryGeneratorAction.cc.o -MF CMakeFiles/PixelSim.dir/src/PrimaryGeneratorAction.cc.o.d -o CMakeFiles/PixelSim.dir/src/PrimaryGeneratorAction.cc.o -c /sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix/src/PrimaryGeneratorAction.cc
 
 CMakeFiles/PixelSim.dir/src/PrimaryGeneratorAction.cc.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/PixelSim.dir/src/PrimaryGeneratorAction.cc.i"
-	/sdf/home/d/dhruvshr/miniconda3/envs/ePix_sim/bin/x86_64-conda-linux-gnu-c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix-Copy1/src/PrimaryGeneratorAction.cc > CMakeFiles/PixelSim.dir/src/PrimaryGeneratorAction.cc.i
+	/sdf/home/d/dhruvshr/miniconda3/envs/ePix_sim/bin/x86_64-conda-linux-gnu-c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix/src/PrimaryGeneratorAction.cc > CMakeFiles/PixelSim.dir/src/PrimaryGeneratorAction.cc.i
 
 CMakeFiles/PixelSim.dir/src/PrimaryGeneratorAction.cc.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/PixelSim.dir/src/PrimaryGeneratorAction.cc.s"
-	/sdf/home/d/dhruvshr/miniconda3/envs/ePix_sim/bin/x86_64-conda-linux-gnu-c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix-Copy1/src/PrimaryGeneratorAction.cc -o CMakeFiles/PixelSim.dir/src/PrimaryGeneratorAction.cc.s
+	/sdf/home/d/dhruvshr/miniconda3/envs/ePix_sim/bin/x86_64-conda-linux-gnu-c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix/src/PrimaryGeneratorAction.cc -o CMakeFiles/PixelSim.dir/src/PrimaryGeneratorAction.cc.s
 
 CMakeFiles/PixelSim.dir/src/RunAction.cc.o: CMakeFiles/PixelSim.dir/flags.make
-CMakeFiles/PixelSim.dir/src/RunAction.cc.o: /sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix-Copy1/src/RunAction.cc
+CMakeFiles/PixelSim.dir/src/RunAction.cc.o: /sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix/src/RunAction.cc
 CMakeFiles/PixelSim.dir/src/RunAction.cc.o: CMakeFiles/PixelSim.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix-Copy1/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/PixelSim.dir/src/RunAction.cc.o"
-	/sdf/home/d/dhruvshr/miniconda3/envs/ePix_sim/bin/x86_64-conda-linux-gnu-c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/PixelSim.dir/src/RunAction.cc.o -MF CMakeFiles/PixelSim.dir/src/RunAction.cc.o.d -o CMakeFiles/PixelSim.dir/src/RunAction.cc.o -c /sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix-Copy1/src/RunAction.cc
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/PixelSim.dir/src/RunAction.cc.o"
+	/sdf/home/d/dhruvshr/miniconda3/envs/ePix_sim/bin/x86_64-conda-linux-gnu-c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/PixelSim.dir/src/RunAction.cc.o -MF CMakeFiles/PixelSim.dir/src/RunAction.cc.o.d -o CMakeFiles/PixelSim.dir/src/RunAction.cc.o -c /sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix/src/RunAction.cc
 
 CMakeFiles/PixelSim.dir/src/RunAction.cc.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/PixelSim.dir/src/RunAction.cc.i"
-	/sdf/home/d/dhruvshr/miniconda3/envs/ePix_sim/bin/x86_64-conda-linux-gnu-c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix-Copy1/src/RunAction.cc > CMakeFiles/PixelSim.dir/src/RunAction.cc.i
+	/sdf/home/d/dhruvshr/miniconda3/envs/ePix_sim/bin/x86_64-conda-linux-gnu-c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix/src/RunAction.cc > CMakeFiles/PixelSim.dir/src/RunAction.cc.i
 
 CMakeFiles/PixelSim.dir/src/RunAction.cc.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/PixelSim.dir/src/RunAction.cc.s"
-	/sdf/home/d/dhruvshr/miniconda3/envs/ePix_sim/bin/x86_64-conda-linux-gnu-c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix-Copy1/src/RunAction.cc -o CMakeFiles/PixelSim.dir/src/RunAction.cc.s
+	/sdf/home/d/dhruvshr/miniconda3/envs/ePix_sim/bin/x86_64-conda-linux-gnu-c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix/src/RunAction.cc -o CMakeFiles/PixelSim.dir/src/RunAction.cc.s
 
 CMakeFiles/PixelSim.dir/src/SteppingAction.cc.o: CMakeFiles/PixelSim.dir/flags.make
-CMakeFiles/PixelSim.dir/src/SteppingAction.cc.o: /sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix-Copy1/src/SteppingAction.cc
+CMakeFiles/PixelSim.dir/src/SteppingAction.cc.o: /sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix/src/SteppingAction.cc
 CMakeFiles/PixelSim.dir/src/SteppingAction.cc.o: CMakeFiles/PixelSim.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix-Copy1/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/PixelSim.dir/src/SteppingAction.cc.o"
-	/sdf/home/d/dhruvshr/miniconda3/envs/ePix_sim/bin/x86_64-conda-linux-gnu-c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/PixelSim.dir/src/SteppingAction.cc.o -MF CMakeFiles/PixelSim.dir/src/SteppingAction.cc.o.d -o CMakeFiles/PixelSim.dir/src/SteppingAction.cc.o -c /sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix-Copy1/src/SteppingAction.cc
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/PixelSim.dir/src/SteppingAction.cc.o"
+	/sdf/home/d/dhruvshr/miniconda3/envs/ePix_sim/bin/x86_64-conda-linux-gnu-c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/PixelSim.dir/src/SteppingAction.cc.o -MF CMakeFiles/PixelSim.dir/src/SteppingAction.cc.o.d -o CMakeFiles/PixelSim.dir/src/SteppingAction.cc.o -c /sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix/src/SteppingAction.cc
 
 CMakeFiles/PixelSim.dir/src/SteppingAction.cc.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/PixelSim.dir/src/SteppingAction.cc.i"
-	/sdf/home/d/dhruvshr/miniconda3/envs/ePix_sim/bin/x86_64-conda-linux-gnu-c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix-Copy1/src/SteppingAction.cc > CMakeFiles/PixelSim.dir/src/SteppingAction.cc.i
+	/sdf/home/d/dhruvshr/miniconda3/envs/ePix_sim/bin/x86_64-conda-linux-gnu-c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix/src/SteppingAction.cc > CMakeFiles/PixelSim.dir/src/SteppingAction.cc.i
 
 CMakeFiles/PixelSim.dir/src/SteppingAction.cc.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/PixelSim.dir/src/SteppingAction.cc.s"
-	/sdf/home/d/dhruvshr/miniconda3/envs/ePix_sim/bin/x86_64-conda-linux-gnu-c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix-Copy1/src/SteppingAction.cc -o CMakeFiles/PixelSim.dir/src/SteppingAction.cc.s
+	/sdf/home/d/dhruvshr/miniconda3/envs/ePix_sim/bin/x86_64-conda-linux-gnu-c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix/src/SteppingAction.cc -o CMakeFiles/PixelSim.dir/src/SteppingAction.cc.s
 
 # Object files for target PixelSim
 PixelSim_OBJECTS = \
@@ -235,7 +235,7 @@ PixelSim: /sdf/home/d/dhruvshr/miniconda3/envs/ePix_sim/lib/libG4global.so
 PixelSim: /sdf/home/d/dhruvshr/miniconda3/envs/ePix_sim/lib/libG4ptl.so.3.0.0
 PixelSim: /sdf/home/d/dhruvshr/miniconda3/envs/ePix_sim/lib/libCLHEP-2.4.7.2.so
 PixelSim: CMakeFiles/PixelSim.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix-Copy1/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Linking CXX executable PixelSim"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Linking CXX executable PixelSim"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/PixelSim.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -247,6 +247,6 @@ CMakeFiles/PixelSim.dir/clean:
 .PHONY : CMakeFiles/PixelSim.dir/clean
 
 CMakeFiles/PixelSim.dir/depend:
-	cd /sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix-Copy1/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix-Copy1 /sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix-Copy1 /sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix-Copy1/build /sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix-Copy1/build /sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix-Copy1/build/CMakeFiles/PixelSim.dir/DependInfo.cmake "--color=$(COLOR)" PixelSim
+	cd /sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix /sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix /sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix/build /sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix/build /sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix/build/CMakeFiles/PixelSim.dir/DependInfo.cmake "--color=$(COLOR)" PixelSim
 .PHONY : CMakeFiles/PixelSim.dir/depend
 

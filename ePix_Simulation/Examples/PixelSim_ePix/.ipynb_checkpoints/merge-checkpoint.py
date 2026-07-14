@@ -1,7 +1,7 @@
 import os
 
 # Target directories to scrape
-TARGET_DIRS = ['/sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix/src', '/sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix/include']
+TARGET_DIRS = ['/sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix/src', '/sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix/include']
 OUTPUT_FILE = 'llm_context.txt'
 
 # Extensions to skip (add or remove as needed)

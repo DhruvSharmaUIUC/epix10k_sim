@@ -18,7 +18,7 @@ public:
     static constexpr G4int kNPixelsY = 384;
     static constexpr G4double kPixelPitchX = 100.0; // um (set in .cc with units)
     static constexpr G4double kPixelPitchY = 100.0; // um
-    static constexpr G4double kPixelHalfZ  = 200.0; // um (half-thickness)
+    static constexpr G4double kPixelHalfZ  = 250.0; // um (half-thickness)
 };
 
 #endif

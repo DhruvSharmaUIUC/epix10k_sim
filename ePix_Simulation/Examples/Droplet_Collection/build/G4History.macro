@@ -1,0 +1,8 @@
+/run/verbose 2
+/run/numberOfThreads 4
+/run/setCut 10 um
+/run/initialize
+/control/execute vis.mac
+/vis/open OGL 600x600-0+0
+/vis/sceneHandler/create OGL
+/vis/viewer/create ! ! 600x600-0+0

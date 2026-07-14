@@ -1,6 +1,6 @@
 # Codebase Structure
 ```
-/sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix/src/
+/sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix/src/
 src/
     RunAction.cc
     DetectorConstruction.cc
@@ -15,7 +15,7 @@ src/
         PrimaryGeneratorAction-checkpoint.cc
         SteppingAction-checkpoint.cc
         DetectorConstruction-checkpoint.cc
-/sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix/include/
+/sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix/include/
 include/
     EventAction.hh
     DetectorConstruction.hh
@@ -32,7 +32,7 @@ include/
         PrimaryGeneratorAction-checkpoint.hh
 ```
 ==================================================
-<file path="/sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix/src/RunAction.cc">
+<file path="/sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix/src/RunAction.cc">
 #include "RunAction.hh"
 #include "G4AnalysisManager.hh"
 #include "G4SystemOfUnits.hh"
@@ -144,7 +144,7 @@ void RunAction::EndOfRunAction(const G4Run*) {
 }
 </file>
 
-<file path="/sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix/src/DetectorConstruction.cc">
+<file path="/sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix/src/DetectorConstruction.cc">
 #include "DetectorConstruction.hh"
 
 #include "G4RunManager.hh"
@@ -206,7 +206,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct() {
 }
 </file>
 
-<file path="/sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix/src/ActionInitialization.cc">
+<file path="/sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix/src/ActionInitialization.cc">
 #include "ActionInitialization.hh"
 #include "PrimaryGeneratorAction.hh"
 #include "RunAction.hh"
@@ -231,7 +231,7 @@ void ActionInitialization::Build() const {
 }
 </file>
 
-<file path="/sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix/src/SteppingAction.cc">
+<file path="/sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix/src/SteppingAction.cc">
 #include "SteppingAction.hh"
 #include "EventAction.hh"
 #include "DetectorConstruction.hh"
@@ -302,7 +302,7 @@ void SteppingAction::UserSteppingAction(const G4Step* step) {
 }
 </file>
 
-<file path="/sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix/src/PrimaryGeneratorAction.cc">
+<file path="/sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix/src/PrimaryGeneratorAction.cc">
 #include "PrimaryGeneratorAction.hh"
 #include "EventAction.hh"
 #include "DetectorConstruction.hh"
@@ -351,7 +351,7 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent) {
 }
 </file>
 
-<file path="/sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix/src/EventAction.cc">
+<file path="/sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix/src/EventAction.cc">
 #include "EventAction.hh"
 #include "RunAction.hh"
 #include "DetectorConstruction.hh"
@@ -503,7 +503,7 @@ void EventAction::EndOfEventAction(const G4Event* event) {
 }
 </file>
 
-<file path="/sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix/src/.ipynb_checkpoints/EventAction-checkpoint.cc">
+<file path="/sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix/src/.ipynb_checkpoints/EventAction-checkpoint.cc">
 #include "EventAction.hh"
 #include "RunAction.hh"
 #include "DetectorConstruction.hh"
@@ -655,7 +655,7 @@ void EventAction::EndOfEventAction(const G4Event* event) {
 }
 </file>
 
-<file path="/sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix/src/.ipynb_checkpoints/RunAction-checkpoint.cc">
+<file path="/sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix/src/.ipynb_checkpoints/RunAction-checkpoint.cc">
 #include "RunAction.hh"
 #include "G4AnalysisManager.hh"
 #include "G4SystemOfUnits.hh"
@@ -767,7 +767,7 @@ void RunAction::EndOfRunAction(const G4Run*) {
 }
 </file>
 
-<file path="/sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix/src/.ipynb_checkpoints/ActionInitialization-checkpoint.cc">
+<file path="/sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix/src/.ipynb_checkpoints/ActionInitialization-checkpoint.cc">
 #include "ActionInitialization.hh"
 #include "PrimaryGeneratorAction.hh"
 #include "RunAction.hh"
@@ -792,7 +792,7 @@ void ActionInitialization::Build() const {
 }
 </file>
 
-<file path="/sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix/src/.ipynb_checkpoints/PrimaryGeneratorAction-checkpoint.cc">
+<file path="/sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix/src/.ipynb_checkpoints/PrimaryGeneratorAction-checkpoint.cc">
 #include "PrimaryGeneratorAction.hh"
 #include "EventAction.hh"
 #include "DetectorConstruction.hh"
@@ -841,7 +841,7 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent) {
 }
 </file>
 
-<file path="/sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix/src/.ipynb_checkpoints/SteppingAction-checkpoint.cc">
+<file path="/sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix/src/.ipynb_checkpoints/SteppingAction-checkpoint.cc">
 #include "SteppingAction.hh"
 #include "EventAction.hh"
 #include "DetectorConstruction.hh"
@@ -912,7 +912,7 @@ void SteppingAction::UserSteppingAction(const G4Step* step) {
 }
 </file>
 
-<file path="/sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix/src/.ipynb_checkpoints/DetectorConstruction-checkpoint.cc">
+<file path="/sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix/src/.ipynb_checkpoints/DetectorConstruction-checkpoint.cc">
 #include "DetectorConstruction.hh"
 
 #include "G4RunManager.hh"
@@ -974,7 +974,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct() {
 }
 </file>
 
-<file path="/sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix/include/EventAction.hh">
+<file path="/sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix/include/EventAction.hh">
 #ifndef EventAction_h
 #define EventAction_h 1
 
@@ -1041,7 +1041,7 @@ private:
 #endif
 </file>
 
-<file path="/sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix/include/DetectorConstruction.hh">
+<file path="/sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix/include/DetectorConstruction.hh">
 #ifndef DetectorConstruction_h
 #define DetectorConstruction_h 1
 
@@ -1062,13 +1062,13 @@ public:
     static constexpr G4int kNPixelsY = 384;
     static constexpr G4double kPixelPitchX = 100.0; // um (set in .cc with units)
     static constexpr G4double kPixelPitchY = 100.0; // um
-    static constexpr G4double kPixelHalfZ  = 225.0; // um (half-thickness)
+    static constexpr G4double kPixelHalfZ  = 250.0; // um (half-thickness)
 };
 
 #endif
 </file>
 
-<file path="/sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix/include/RunAction.hh">
+<file path="/sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix/include/RunAction.hh">
 #ifndef RunAction_h
 #define RunAction_h 1
 
@@ -1087,7 +1087,7 @@ public:
 #endif
 </file>
 
-<file path="/sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix/include/SteppingAction.hh">
+<file path="/sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix/include/SteppingAction.hh">
 #ifndef SteppingAction_h
 #define SteppingAction_h 1
 
@@ -1108,7 +1108,7 @@ private:
 #endif
 </file>
 
-<file path="/sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix/include/ActionInitialization.hh">
+<file path="/sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix/include/ActionInitialization.hh">
 #ifndef ActionInitialization_h
 #define ActionInitialization_h 1
 
@@ -1126,7 +1126,7 @@ public:
 #endif
 </file>
 
-<file path="/sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix/include/PrimaryGeneratorAction.hh">
+<file path="/sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix/include/PrimaryGeneratorAction.hh">
 #ifndef PrimaryGeneratorAction_h
 #define PrimaryGeneratorAction_h 1
 
@@ -1151,7 +1151,7 @@ private:
 #endif
 </file>
 
-<file path="/sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix/include/.ipynb_checkpoints/EventAction-checkpoint.hh">
+<file path="/sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix/include/.ipynb_checkpoints/EventAction-checkpoint.hh">
 #ifndef EventAction_h
 #define EventAction_h 1
 
@@ -1218,7 +1218,7 @@ private:
 #endif
 </file>
 
-<file path="/sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix/include/.ipynb_checkpoints/DetectorConstruction-checkpoint.hh">
+<file path="/sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix/include/.ipynb_checkpoints/DetectorConstruction-checkpoint.hh">
 #ifndef DetectorConstruction_h
 #define DetectorConstruction_h 1
 
@@ -1239,13 +1239,13 @@ public:
     static constexpr G4int kNPixelsY = 384;
     static constexpr G4double kPixelPitchX = 100.0; // um (set in .cc with units)
     static constexpr G4double kPixelPitchY = 100.0; // um
-    static constexpr G4double kPixelHalfZ  = 225.0; // um (half-thickness)
+    static constexpr G4double kPixelHalfZ  = 250.0; // um (half-thickness)
 };
 
 #endif
 </file>
 
-<file path="/sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix/include/.ipynb_checkpoints/RunAction-checkpoint.hh">
+<file path="/sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix/include/.ipynb_checkpoints/RunAction-checkpoint.hh">
 #ifndef RunAction_h
 #define RunAction_h 1
 
@@ -1264,7 +1264,7 @@ public:
 #endif
 </file>
 
-<file path="/sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix/include/.ipynb_checkpoints/ActionInitialization-checkpoint.hh">
+<file path="/sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix/include/.ipynb_checkpoints/ActionInitialization-checkpoint.hh">
 #ifndef ActionInitialization_h
 #define ActionInitialization_h 1
 
@@ -1282,7 +1282,7 @@ public:
 #endif
 </file>
 
-<file path="/sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix/include/.ipynb_checkpoints/SteppingAction-checkpoint.hh">
+<file path="/sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix/include/.ipynb_checkpoints/SteppingAction-checkpoint.hh">
 #ifndef SteppingAction_h
 #define SteppingAction_h 1
 
@@ -1303,7 +1303,7 @@ private:
 #endif
 </file>
 
-<file path="/sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix/include/.ipynb_checkpoints/PrimaryGeneratorAction-checkpoint.hh">
+<file path="/sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix/include/.ipynb_checkpoints/PrimaryGeneratorAction-checkpoint.hh">
 #ifndef PrimaryGeneratorAction_h
 #define PrimaryGeneratorAction_h 1
 

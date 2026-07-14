@@ -7,19 +7,20 @@
 #include "G4VisExecutive.hh"
 #include "G4UIExecutive.hh"
 #include "G4StepLimiterPhysics.hh"
-#include "G4RandomTools.hh"
 #include "Randomize.hh"
+#include "G4RandomTools.hh"
 #include <ctime>
 
 int main(int argc, char** argv) {
+
     // 0. Set random seed
     G4Random::setTheEngine(new CLHEP::RanecuEngine);
     
     // Set a unique seed based on the current system time
     G4long seed = time(NULL);
     G4Random::setTheSeed(seed);
-    
-    
+    //==============================
+
     // 1. Setup the User Interface for interactive mode
     G4UIExecutive* ui = nullptr;
     if (argc == 1) {

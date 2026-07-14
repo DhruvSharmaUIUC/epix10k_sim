@@ -1,0 +1,4 @@
+/run/initialize
+/run/setCut 1 um
+/analysis/setFileName ../outputs/sparse_sim_run_006
+/run/beamOn 25000

@@ -1,0 +1,559 @@
+# Codebase Structure
+```
+/sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix_Data_Gen/src/
+src/
+    RunAction.cc
+    PrimaryGeneratorAction.cc
+    EventAction.cc
+    SteppingAction.cc
+    ActionInitialization.cc
+    DetectorConstruction.cc
+    .ipynb_checkpoints/
+        SteppingAction-checkpoint.cc
+        EventAction-checkpoint.cc
+        RunAction-checkpoint.cc
+        DetectorConstruction-checkpoint.cc
+        PrimaryGeneratorAction-checkpoint.cc
+        ActionInitialization-checkpoint.cc
+```
+==================================================
+<file path="/sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix_Data_Gen/src/RunAction.cc">
+#include "RunAction.hh"
+#include "G4AnalysisManager.hh"
+#include "G4SystemOfUnits.hh"
+#include "G4Run.hh"
+
+RunAction::RunAction() : G4UserRunAction() {
+    auto am = G4AnalysisManager::Instance();
+    am->SetDefaultFileType("root");
+    am->SetVerboseLevel(1);
+
+    // =============================================
+    // HISTOGRAMS ONLY (minimal output)
+    // =============================================
+
+    // H1 ID 0: Total energy deposited per event in sensor
+    am->CreateH1("TotalEdep", "Total Edep per Event;E_{dep} [MeV];Counts",
+                 500, 0.0, 1.0 * MeV);
+
+    // H1 ID 1: Energy deposited per primary electron (should show Landau)
+    am->CreateH1("PrimaryEdep", "Primary Electron Edep;E_{dep} [MeV];Counts",
+                 500, 0.0, 1.0 * MeV);
+
+    // H2 ID 0: 2D energy deposition map (Edeps per pixel)
+    am->CreateH2("EdepMap", "Energy Deposition Map;X [mm];Y [mm]",
+                 352, -17.6 * mm, 17.6 * mm,
+                 384, -19.2 * mm, 19.2 * mm);
+
+    // H2 ID 1: 2D primary electron entry map (ground truth)
+    am->CreateH2("EntryMap", "Primary Entry Map;X [mm];Y [mm]",
+                 352, -17.6 * mm, 17.6 * mm,
+                 384, -19.2 * mm, 19.2 * mm);
+}
+
+RunAction::~RunAction() {}
+
+void RunAction::BeginOfRunAction(const G4Run*) {
+    auto am = G4AnalysisManager::Instance();
+    am->OpenFile();
+}
+
+void RunAction::EndOfRunAction(const G4Run*) {
+    auto am = G4AnalysisManager::Instance();
+    am->Write();
+    am->CloseFile();
+}
+</file>
+
+<file path="/sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix_Data_Gen/src/PrimaryGeneratorAction.cc">
+#include "PrimaryGeneratorAction.hh"
+#include "EventAction.hh"
+#include "DetectorConstruction.hh"
+
+#include "G4ParticleGun.hh"
+#include "G4ParticleTable.hh"
+#include "G4ParticleDefinition.hh"
+#include "G4SystemOfUnits.hh"
+#include "Randomize.hh"
+
+PrimaryGeneratorAction::PrimaryGeneratorAction(EventAction* eventAction)
+    : G4VUserPrimaryGeneratorAction(),
+      fParticleGun(nullptr),
+      fEventAction(eventAction)
+{
+    fParticleGun = new G4ParticleGun(1);
+
+    auto particleTable = G4ParticleTable::GetParticleTable();
+    auto particle = particleTable->FindParticle("e-");
+    fParticleGun->SetParticleDefinition(particle);
+    fParticleGun->SetParticleEnergy(3.12 * MeV);
+    fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0., 0., 1.));
+}
+
+PrimaryGeneratorAction::~PrimaryGeneratorAction() {
+    delete fParticleGun;
+}
+
+void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent) {
+    G4double halfX = 0.5 * DetectorConstruction::kNPixelsX
+                     * DetectorConstruction::kPixelPitchX * um;
+    G4double halfY = 0.5 * DetectorConstruction::kNPixelsY
+                     * DetectorConstruction::kPixelPitchY * um;
+
+    G4double xpos = CLHEP::RandFlat::shoot(-halfX, halfX);
+    G4double ypos = CLHEP::RandFlat::shoot(-halfY, halfY);
+    G4double zpos = -250.0 * um;
+
+    fParticleGun->SetParticlePosition(G4ThreeVector(xpos, ypos, zpos));
+    fParticleGun->GeneratePrimaryVertex(anEvent);
+
+    fEventAction->SetPrimaryPosition(xpos, ypos, zpos);
+    fEventAction->SetPrimaryEnergy(fParticleGun->GetParticleEnergy());
+}
+</file>
+
+<file path="/sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix_Data_Gen/src/EventAction.cc">
+#include "EventAction.hh"
+#include "RunAction.hh"
+#include "G4AnalysisManager.hh"
+#include "G4Event.hh"
+#include "G4SystemOfUnits.hh"
+
+EventAction::EventAction(RunAction* runAction)
+    : G4UserEventAction(),
+      fRunAction(runAction),
+      fTotalEdep(0.), fPrimaryEdep(0.),
+      fPrimaryX(0.), fPrimaryY(0.), fPrimaryZ(0.), fPrimaryE(0.)
+{}
+
+EventAction::~EventAction() {}
+
+void EventAction::BeginOfEventAction(const G4Event*) {
+    fTotalEdep = 0.;
+    fPrimaryEdep = 0.;
+}
+
+void EventAction::SetPrimaryPosition(G4double x, G4double y, G4double z) {
+    fPrimaryX = x; fPrimaryY = y; fPrimaryZ = z;
+}
+
+void EventAction::SetPrimaryEnergy(G4double e) {
+    fPrimaryE = e;
+}
+
+void EventAction::AccumulateEdep(G4double edep, G4int parentID) {
+    fTotalEdep += edep;
+    if (parentID == 0) fPrimaryEdep += edep;
+}
+
+void EventAction::EndOfEventAction(const G4Event*) {
+    if (fTotalEdep <= 0.) return;  // nothing deposited
+
+    auto am = G4AnalysisManager::Instance();
+
+    // Fill 1D summary histograms
+    am->FillH1(0, fTotalEdep);     // Total edep per event
+    am->FillH1(1, fPrimaryEdep);   // Primary electron edep only
+
+    // Fill entry map for primary (one entry per event)
+    am->FillH2(1, fPrimaryX, fPrimaryY, 1.0);
+}
+</file>
+
+<file path="/sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix_Data_Gen/src/SteppingAction.cc">
+#include "SteppingAction.hh"
+#include "EventAction.hh"
+#include "DetectorConstruction.hh"
+
+#include "G4Step.hh"
+#include "G4Track.hh"
+#include "G4SystemOfUnits.hh"
+#include "G4AnalysisManager.hh"
+
+SteppingAction::SteppingAction(EventAction* eventAction)
+    : G4UserSteppingAction(), fEventAction(eventAction) {}
+
+SteppingAction::~SteppingAction() {}
+
+void SteppingAction::UserSteppingAction(const G4Step* step) {
+    // Only record steps inside the sensor volume
+    auto volume = step->GetPreStepPoint()->GetTouchableHandle()->GetVolume();
+    if (!volume) return;
+    if (volume->GetName() != "Sensor") return;
+
+    // Get energy deposit
+    G4double edep = step->GetTotalEnergyDeposit();
+    if (edep <= 0.) return;
+
+    // Compute midpoint position
+    G4ThreeVector prePos  = step->GetPreStepPoint()->GetPosition();
+    G4ThreeVector postPos = step->GetPostStepPoint()->GetPosition();
+    G4ThreeVector midPos  = 0.5 * (prePos + postPos);
+
+    // Fill the 2D energy deposition histogram directly (no buffering)
+    auto am = G4AnalysisManager::Instance();
+    am->FillH2(0, midPos.x(), midPos.y(), edep / keV);
+
+    // Accumulate event-level totals for H1 histograms
+    G4int parentID = step->GetTrack()->GetParentID();
+    fEventAction->AccumulateEdep(edep, parentID);
+}
+</file>
+
+<file path="/sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix_Data_Gen/src/ActionInitialization.cc">
+#include "ActionInitialization.hh"
+#include "PrimaryGeneratorAction.hh"
+#include "RunAction.hh"
+#include "EventAction.hh"
+#include "SteppingAction.hh"
+
+ActionInitialization::ActionInitialization() : G4VUserActionInitialization() {}
+ActionInitialization::~ActionInitialization() {}
+
+void ActionInitialization::BuildForMaster() const {
+    SetUserAction(new RunAction);
+}
+
+void ActionInitialization::Build() const {
+    auto runAction   = new RunAction;
+    auto eventAction = new EventAction(runAction);
+
+    SetUserAction(runAction);
+    SetUserAction(eventAction);
+    SetUserAction(new PrimaryGeneratorAction(eventAction));
+    SetUserAction(new SteppingAction(eventAction));
+}
+</file>
+
+<file path="/sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix_Data_Gen/src/DetectorConstruction.cc">
+#include "DetectorConstruction.hh"
+
+#include "G4RunManager.hh"
+#include "G4NistManager.hh"
+#include "G4Box.hh"
+#include "G4LogicalVolume.hh"
+#include "G4PVPlacement.hh"
+#include "G4SystemOfUnits.hh"
+#include "G4UserLimits.hh"
+#include "G4Region.hh"
+#include "G4RegionStore.hh"
+#include "G4ProductionCuts.hh"
+
+DetectorConstruction::DetectorConstruction() : G4VUserDetectorConstruction() {}
+DetectorConstruction::~DetectorConstruction() {}
+
+G4VPhysicalVolume* DetectorConstruction::Construct() {
+    G4NistManager* nist = G4NistManager::Instance();
+
+    // --- Materials ---
+    G4Material* world_mat = nist->FindOrBuildMaterial("G4_Galactic");
+    G4Material* pixel_mat = nist->FindOrBuildMaterial("G4_Si");
+
+    // --- World Volume ---
+    G4double world_size = 25.0 * cm;
+    auto solidWorld = new G4Box("World", world_size, world_size, world_size);
+    auto logicWorld = new G4LogicalVolume(solidWorld, world_mat, "World");
+    auto physWorld  = new G4PVPlacement(
+        0, G4ThreeVector(), logicWorld, "World", nullptr, false, 0, true);
+
+    // --- Pixel Sensor Module (monolithic Si slab) ---
+    // Full sensor: 352 pixels x 100 um = 35.2 mm in X
+    //              384 pixels x 100 um = 38.4 mm in Y
+    //              Thickness: 450 um (half = 225 um)
+    G4double sensorHalfX = 0.5 * kNPixelsX * kPixelPitchX * um;  // 17.6 mm
+    G4double sensorHalfY = 0.5 * kNPixelsY * kPixelPitchY * um;  // 19.2 mm
+    G4double sensorHalfZ = kPixelHalfZ * um;                      // 225 um
+
+    auto solidSensor = new G4Box("Sensor", sensorHalfX, sensorHalfY, sensorHalfZ);
+    auto logicSensor = new G4LogicalVolume(solidSensor, pixel_mat, "Sensor");
+
+    // Step limiter: ensure multiple steps per pixel for accurate deposition
+    G4double maxStep = 10.0 * um;
+    logicSensor->SetUserLimits(new G4UserLimits(maxStep));
+
+    // Region with production cuts
+    auto sensorRegion = new G4Region("SensorRegion");
+    sensorRegion->AddRootLogicalVolume(logicSensor);
+    auto cuts = new G4ProductionCuts();
+    cuts->SetProductionCut(1.0 * um);  // low-energy secondaries
+    sensorRegion->SetProductionCuts(cuts);
+
+    // Place sensor at origin (front face at z = -225 um, back face at z = +225 um)
+    new G4PVPlacement(
+        0, G4ThreeVector(0, 0, 0),
+        logicSensor, "Sensor", logicWorld, false, 0, true);
+
+    return physWorld;
+}
+</file>
+
+<file path="/sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix_Data_Gen/src/.ipynb_checkpoints/SteppingAction-checkpoint.cc">
+#include "SteppingAction.hh"
+#include "EventAction.hh"
+#include "DetectorConstruction.hh"
+
+#include "G4Step.hh"
+#include "G4Track.hh"
+#include "G4SystemOfUnits.hh"
+#include "G4AnalysisManager.hh"
+
+SteppingAction::SteppingAction(EventAction* eventAction)
+    : G4UserSteppingAction(), fEventAction(eventAction) {}
+
+SteppingAction::~SteppingAction() {}
+
+void SteppingAction::UserSteppingAction(const G4Step* step) {
+    // Only record steps inside the sensor volume
+    auto volume = step->GetPreStepPoint()->GetTouchableHandle()->GetVolume();
+    if (!volume) return;
+    if (volume->GetName() != "Sensor") return;
+
+    // Get energy deposit
+    G4double edep = step->GetTotalEnergyDeposit();
+    if (edep <= 0.) return;
+
+    // Compute midpoint position
+    G4ThreeVector prePos  = step->GetPreStepPoint()->GetPosition();
+    G4ThreeVector postPos = step->GetPostStepPoint()->GetPosition();
+    G4ThreeVector midPos  = 0.5 * (prePos + postPos);
+
+    // Fill the 2D energy deposition histogram directly (no buffering)
+    auto am = G4AnalysisManager::Instance();
+    am->FillH2(0, midPos.x(), midPos.y(), edep / keV);
+
+    // Accumulate event-level totals for H1 histograms
+    G4int parentID = step->GetTrack()->GetParentID();
+    fEventAction->AccumulateEdep(edep, parentID);
+}
+</file>
+
+<file path="/sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix_Data_Gen/src/.ipynb_checkpoints/EventAction-checkpoint.cc">
+#include "EventAction.hh"
+#include "RunAction.hh"
+#include "G4AnalysisManager.hh"
+#include "G4Event.hh"
+#include "G4SystemOfUnits.hh"
+
+EventAction::EventAction(RunAction* runAction)
+    : G4UserEventAction(),
+      fRunAction(runAction),
+      fTotalEdep(0.), fPrimaryEdep(0.),
+      fPrimaryX(0.), fPrimaryY(0.), fPrimaryZ(0.), fPrimaryE(0.)
+{}
+
+EventAction::~EventAction() {}
+
+void EventAction::BeginOfEventAction(const G4Event*) {
+    fTotalEdep = 0.;
+    fPrimaryEdep = 0.;
+}
+
+void EventAction::SetPrimaryPosition(G4double x, G4double y, G4double z) {
+    fPrimaryX = x; fPrimaryY = y; fPrimaryZ = z;
+}
+
+void EventAction::SetPrimaryEnergy(G4double e) {
+    fPrimaryE = e;
+}
+
+void EventAction::AccumulateEdep(G4double edep, G4int parentID) {
+    fTotalEdep += edep;
+    if (parentID == 0) fPrimaryEdep += edep;
+}
+
+void EventAction::EndOfEventAction(const G4Event*) {
+    if (fTotalEdep <= 0.) return;  // nothing deposited
+
+    auto am = G4AnalysisManager::Instance();
+
+    // Fill 1D summary histograms
+    am->FillH1(0, fTotalEdep);     // Total edep per event
+    am->FillH1(1, fPrimaryEdep);   // Primary electron edep only
+
+    // Fill entry map for primary (one entry per event)
+    am->FillH2(1, fPrimaryX, fPrimaryY, 1.0);
+}
+</file>
+
+<file path="/sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix_Data_Gen/src/.ipynb_checkpoints/RunAction-checkpoint.cc">
+#include "RunAction.hh"
+#include "G4AnalysisManager.hh"
+#include "G4SystemOfUnits.hh"
+#include "G4Run.hh"
+
+RunAction::RunAction() : G4UserRunAction() {
+    auto am = G4AnalysisManager::Instance();
+    am->SetDefaultFileType("root");
+    am->SetVerboseLevel(1);
+
+    // =============================================
+    // HISTOGRAMS ONLY (minimal output)
+    // =============================================
+
+    // H1 ID 0: Total energy deposited per event in sensor
+    am->CreateH1("TotalEdep", "Total Edep per Event;E_{dep} [MeV];Counts",
+                 500, 0.0, 1.0 * MeV);
+
+    // H1 ID 1: Energy deposited per primary electron (should show Landau)
+    am->CreateH1("PrimaryEdep", "Primary Electron Edep;E_{dep} [MeV];Counts",
+                 500, 0.0, 1.0 * MeV);
+
+    // H2 ID 0: 2D energy deposition map (Edeps per pixel)
+    am->CreateH2("EdepMap", "Energy Deposition Map;X [mm];Y [mm]",
+                 352, -17.6 * mm, 17.6 * mm,
+                 384, -19.2 * mm, 19.2 * mm);
+
+    // H2 ID 1: 2D primary electron entry map (ground truth)
+    am->CreateH2("EntryMap", "Primary Entry Map;X [mm];Y [mm]",
+                 352, -17.6 * mm, 17.6 * mm,
+                 384, -19.2 * mm, 19.2 * mm);
+}
+
+RunAction::~RunAction() {}
+
+void RunAction::BeginOfRunAction(const G4Run*) {
+    auto am = G4AnalysisManager::Instance();
+    am->OpenFile();
+}
+
+void RunAction::EndOfRunAction(const G4Run*) {
+    auto am = G4AnalysisManager::Instance();
+    am->Write();
+    am->CloseFile();
+}
+</file>
+
+<file path="/sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix_Data_Gen/src/.ipynb_checkpoints/DetectorConstruction-checkpoint.cc">
+#include "DetectorConstruction.hh"
+
+#include "G4RunManager.hh"
+#include "G4NistManager.hh"
+#include "G4Box.hh"
+#include "G4LogicalVolume.hh"
+#include "G4PVPlacement.hh"
+#include "G4SystemOfUnits.hh"
+#include "G4UserLimits.hh"
+#include "G4Region.hh"
+#include "G4RegionStore.hh"
+#include "G4ProductionCuts.hh"
+
+DetectorConstruction::DetectorConstruction() : G4VUserDetectorConstruction() {}
+DetectorConstruction::~DetectorConstruction() {}
+
+G4VPhysicalVolume* DetectorConstruction::Construct() {
+    G4NistManager* nist = G4NistManager::Instance();
+
+    // --- Materials ---
+    G4Material* world_mat = nist->FindOrBuildMaterial("G4_Galactic");
+    G4Material* pixel_mat = nist->FindOrBuildMaterial("G4_Si");
+
+    // --- World Volume ---
+    G4double world_size = 25.0 * cm;
+    auto solidWorld = new G4Box("World", world_size, world_size, world_size);
+    auto logicWorld = new G4LogicalVolume(solidWorld, world_mat, "World");
+    auto physWorld  = new G4PVPlacement(
+        0, G4ThreeVector(), logicWorld, "World", nullptr, false, 0, true);
+
+    // --- Pixel Sensor Module (monolithic Si slab) ---
+    // Full sensor: 352 pixels x 100 um = 35.2 mm in X
+    //              384 pixels x 100 um = 38.4 mm in Y
+    //              Thickness: 450 um (half = 225 um)
+    G4double sensorHalfX = 0.5 * kNPixelsX * kPixelPitchX * um;  // 17.6 mm
+    G4double sensorHalfY = 0.5 * kNPixelsY * kPixelPitchY * um;  // 19.2 mm
+    G4double sensorHalfZ = kPixelHalfZ * um;                      // 225 um
+
+    auto solidSensor = new G4Box("Sensor", sensorHalfX, sensorHalfY, sensorHalfZ);
+    auto logicSensor = new G4LogicalVolume(solidSensor, pixel_mat, "Sensor");
+
+    // Step limiter: ensure multiple steps per pixel for accurate deposition
+    G4double maxStep = 10.0 * um;
+    logicSensor->SetUserLimits(new G4UserLimits(maxStep));
+
+    // Region with production cuts
+    auto sensorRegion = new G4Region("SensorRegion");
+    sensorRegion->AddRootLogicalVolume(logicSensor);
+    auto cuts = new G4ProductionCuts();
+    cuts->SetProductionCut(1.0 * um);  // low-energy secondaries
+    sensorRegion->SetProductionCuts(cuts);
+
+    // Place sensor at origin (front face at z = -225 um, back face at z = +225 um)
+    new G4PVPlacement(
+        0, G4ThreeVector(0, 0, 0),
+        logicSensor, "Sensor", logicWorld, false, 0, true);
+
+    return physWorld;
+}
+</file>
+
+<file path="/sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix_Data_Gen/src/.ipynb_checkpoints/PrimaryGeneratorAction-checkpoint.cc">
+#include "PrimaryGeneratorAction.hh"
+#include "EventAction.hh"
+#include "DetectorConstruction.hh"
+
+#include "G4ParticleGun.hh"
+#include "G4ParticleTable.hh"
+#include "G4ParticleDefinition.hh"
+#include "G4SystemOfUnits.hh"
+#include "Randomize.hh"
+
+PrimaryGeneratorAction::PrimaryGeneratorAction(EventAction* eventAction)
+    : G4VUserPrimaryGeneratorAction(),
+      fParticleGun(nullptr),
+      fEventAction(eventAction)
+{
+    fParticleGun = new G4ParticleGun(1);
+
+    auto particleTable = G4ParticleTable::GetParticleTable();
+    auto particle = particleTable->FindParticle("e-");
+    fParticleGun->SetParticleDefinition(particle);
+    fParticleGun->SetParticleEnergy(3.12 * MeV);
+    fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0., 0., 1.));
+}
+
+PrimaryGeneratorAction::~PrimaryGeneratorAction() {
+    delete fParticleGun;
+}
+
+void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent) {
+    G4double halfX = 0.5 * DetectorConstruction::kNPixelsX
+                     * DetectorConstruction::kPixelPitchX * um;
+    G4double halfY = 0.5 * DetectorConstruction::kNPixelsY
+                     * DetectorConstruction::kPixelPitchY * um;
+
+    G4double xpos = CLHEP::RandFlat::shoot(-halfX, halfX);
+    G4double ypos = CLHEP::RandFlat::shoot(-halfY, halfY);
+    G4double zpos = -250.0 * um;
+
+    fParticleGun->SetParticlePosition(G4ThreeVector(xpos, ypos, zpos));
+    fParticleGun->GeneratePrimaryVertex(anEvent);
+
+    fEventAction->SetPrimaryPosition(xpos, ypos, zpos);
+    fEventAction->SetPrimaryEnergy(fParticleGun->GetParticleEnergy());
+}
+</file>
+
+<file path="/sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix_Data_Gen/src/.ipynb_checkpoints/ActionInitialization-checkpoint.cc">
+#include "ActionInitialization.hh"
+#include "PrimaryGeneratorAction.hh"
+#include "RunAction.hh"
+#include "EventAction.hh"
+#include "SteppingAction.hh"
+
+ActionInitialization::ActionInitialization() : G4VUserActionInitialization() {}
+ActionInitialization::~ActionInitialization() {}
+
+void ActionInitialization::BuildForMaster() const {
+    SetUserAction(new RunAction);
+}
+
+void ActionInitialization::Build() const {
+    auto runAction   = new RunAction;
+    auto eventAction = new EventAction(runAction);
+
+    SetUserAction(runAction);
+    SetUserAction(eventAction);
+    SetUserAction(new PrimaryGeneratorAction(eventAction));
+    SetUserAction(new SteppingAction(eventAction));
+}
+</file>
+

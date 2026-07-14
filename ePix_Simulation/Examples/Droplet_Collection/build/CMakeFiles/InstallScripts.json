@@ -1,0 +1,7 @@
+{
+	"InstallScripts" : 
+	[
+		"/sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/Droplet_Collection/build/cmake_install.cmake"
+	],
+	"Parallel" : false
+}

@@ -9,11 +9,10 @@
 #SBATCH --output=ePix_Simulations-%j.out
 #SBATCH --error=ePix_Simulations-%j.txt
 #
-#SBATCH --ntasks=10
+#SBATCH --ntasks=20
 #SBATCH --cpus-per-task=1
 #SBATCH --mem-per-cpu=6g
 #
-#SBATCH --time=0-00:05:00
+#SBATCH --time=0-00:30:00
 #
-
 ./sparse_sims.sh

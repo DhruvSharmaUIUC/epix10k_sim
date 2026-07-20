@@ -1,9 +1,9 @@
 #!/bin/bash
-cd ~/SULI2026/ePix_Simulation/Examples/PixelSim_ePix/build
+cd ~/SULI2026/ePix_Simulation/Examples/PixelSim_ePix_Data_Gen/build
 
 OUTPUT_DIR="../outputs"
-N_RUNS=1
-ELECS_PER_RUN=1000
+N_RUNS=20
+ELECS_PER_RUN=20000
 
 mkdir -p "${OUTPUT_DIR}"
 mkdir -p "./macros"
@@ -13,12 +13,12 @@ echo " Launching ${N_RUNS} simulation runs in parallel"
 echo "============================================="
 
 for i in $(seq 1 ${N_RUNS}); do
-    RUN_MACRO="./macros/run_${i}.mac"
-
+    RUN_MACRO="./macros/run_${ELECS_PER_RUN}_e-_${i}.mac"
+    OUTPUT_NAME="sim_${ELECS_PER_RUN}_e-_run_$(printf "%03d" ${i})"
     cat > "${RUN_MACRO}" << EOF
 /run/initialize
 /run/setCut 1 um
-/analysis/setFileName ${OUTPUT_DIR}/sparse_sim_run_$(printf "%03d" ${i})
+/analysis/setFileName ${OUTPUT_DIR}/${OUTPUT_NAME}
 /run/beamOn ${ELECS_PER_RUN}
 EOF
 

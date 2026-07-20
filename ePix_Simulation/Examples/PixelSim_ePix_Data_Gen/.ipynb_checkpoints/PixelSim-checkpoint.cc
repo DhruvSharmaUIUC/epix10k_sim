@@ -9,6 +9,7 @@
 #include "G4StepLimiterPhysics.hh"
 #include "Randomize.hh"
 #include "G4RandomTools.hh"
+#include <unistd.h>
 #include <ctime>
 
 int main(int argc, char** argv) {
@@ -17,7 +18,7 @@ int main(int argc, char** argv) {
     G4Random::setTheEngine(new CLHEP::RanecuEngine);
     
     // Set a unique seed based on the current system time
-    G4long seed = time(NULL);
+    G4long seed = time(NULL) ^ (static_cast<G4long>(getpid()) << 16);
     G4Random::setTheSeed(seed);
 
     // 1. Setup the User Interface for interactive mode

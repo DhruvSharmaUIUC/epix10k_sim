@@ -1,6 +1,6 @@
 /run/numberOfThreads 1
 /run/initialize
 /run/setCut 1 um
-/random/setSeeds 42
+/random/setSeeds 42 67
 /analysis/setFileName ../outputs/sparse_sim_run_1
-/run/beamOn 25000
+/run/beamOn 1000

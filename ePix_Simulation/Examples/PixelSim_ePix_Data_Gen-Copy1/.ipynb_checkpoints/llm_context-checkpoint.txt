@@ -1,0 +1,906 @@
+# Codebase Structure
+```
+/sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix/src/
+src/
+    ActionInitialization.cc
+    RunAction.cc
+    SteppingAction.cc
+    PrimaryGeneratorAction.cc
+    DetectorConstruction.cc
+    EventAction.cc
+    .ipynb_checkpoints/
+        DetectorConstruction-checkpoint.cc
+        ActionInitialization-checkpoint.cc
+        PrimaryGeneratorAction-checkpoint.cc
+        EventAction-checkpoint.cc
+        SteppingAction-checkpoint.cc
+        RunAction-checkpoint.cc
+/sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix/include/
+include/
+    RunAction.hh
+    DetectorConstruction.hh
+    EventAction.hh
+    PrimaryGeneratorAction.hh
+    SteppingAction.hh
+    ActionInitialization.hh
+    .ipynb_checkpoints/
+        DetectorConstruction-checkpoint.hh
+        SteppingAction-checkpoint.hh
+        ActionInitialization-checkpoint.hh
+        PrimaryGeneratorAction-checkpoint.hh
+        RunAction-checkpoint.hh
+        EventAction-checkpoint.hh
+```
+==================================================
+<file path="/sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix/src/ActionInitialization.cc">
+#include "ActionInitialization.hh"
+#include "PrimaryGeneratorAction.hh"
+#include "RunAction.hh"
+#include "EventAction.hh"
+#include "SteppingAction.hh"
+
+ActionInitialization::ActionInitialization() : G4VUserActionInitialization() {}
+ActionInitialization::~ActionInitialization() {}
+
+void ActionInitialization::BuildForMaster() const {
+    SetUserAction(new RunAction);
+}
+
+void ActionInitialization::Build() const {
+    RunAction* runAction = new RunAction;
+    SetUserAction(runAction);
+    SetUserAction(new EventAction(runAction)); // Register EventAction
+    SetUserAction(new PrimaryGeneratorAction);
+    SetUserAction(new SteppingAction(runAction));
+}
+
+</file>
+
+<file path="/sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix/src/RunAction.cc">
+#include "RunAction.hh"
+#include "G4AnalysisManager.hh"
+#include "G4SystemOfUnits.hh"
+
+RunAction::RunAction() : G4UserRunAction() {
+    auto analysisManager = G4AnalysisManager::Instance();
+    analysisManager->SetNtupleMerging(true);
+
+    // H1 ID 0: Total energy deposition per event
+    analysisManager->CreateH1("PixelEdep", "Energy Deposition per Event", 3120, 0., 3.12*MeV);
+
+    // H2 ID 0: 2D Map of energy deposition
+    analysisManager->CreateH2("EdepHeatMap", "Spatial Edep",
+                         352, -176*100*um, 176*100*um,
+                         384, -192*100*um, 192*100*um);
+
+    // H2 ID 1: 2D Map of electron surface hits (ground truth labels)
+    analysisManager->CreateH2("HitsHeatMap", "Electron Surface Hits",
+                         352, -176*100*um, 176*100*um,
+                         384, -192*100*um, 192*100*um);
+}
+
+RunAction::~RunAction() {}
+
+void RunAction::BeginOfRunAction(const G4Run*) {
+    auto analysisManager = G4AnalysisManager::Instance();
+    analysisManager->SetDefaultFileType("root");   
+    analysisManager->OpenFile();  
+}
+
+void RunAction::EndOfRunAction(const G4Run*) {
+    auto analysisManager = G4AnalysisManager::Instance();
+    analysisManager->Write();
+    analysisManager->CloseFile();
+}
+</file>
+
+<file path="/sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix/src/SteppingAction.cc">
+#include "SteppingAction.hh"
+#include "RunAction.hh"
+#include "G4Step.hh"
+#include "G4Track.hh"
+#include "G4RunManager.hh"
+#include "G4SystemOfUnits.hh"
+
+void SteppingAction::UserSteppingAction(const G4Step* step) {
+    auto volume = step->GetPreStepPoint()->GetTouchableHandle()->GetVolume();
+    if (!volume) return;
+    if (volume->GetName() != "Module") return;
+
+    //========================================
+    G4double stepSize = step->GetStepLength(); 
+    
+    // Convert to mm for readable output
+    G4cout << "Step size: " << stepSize / mm << " mm" << G4endl; 
+    //========================================
+    
+    G4int trackId = step->GetTrack()->GetTrackID();
+
+    // --- 1. Energy deposition (H2 ID 0) ---
+    G4double edep = step->GetTotalEnergyDeposit();
+    if (edep > 0.) {
+        G4ThreeVector pre  = step->GetPreStepPoint()->GetPosition();
+        G4ThreeVector post = step->GetPostStepPoint()->GetPosition();
+        G4ThreeVector pos  = 0.5 * (pre + post);
+        fRunAction->AddHit(pos.x(), pos.y(), edep, trackId);
+    }
+
+    // --- 2. Surface hit (H2 ID 1) — primary electrons only ---
+    // Only count the PRIMARY particle (the electron you shot)
+    if (step->GetTrack()->GetParentID() == 0) {
+        // Pre-step point of the FIRST step in this volume = surface position
+        // AddSurfaceHit internally ignores duplicate trackIds
+        G4ThreeVector surfPos = step->GetPreStepPoint()->GetPosition();
+        fRunAction->AddSurfaceHit(surfPos.x(), surfPos.y(), trackId);
+    }
+
+    if (trackId == 1 && track->GetDefinition()
+}
+</file>
+
+<file path="/sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix/src/PrimaryGeneratorAction.cc">
+#include "PrimaryGeneratorAction.hh"
+#include "G4ParticleGun.hh"
+#include "G4ParticleTable.hh"
+#include "G4ParticleDefinition.hh"
+#include "G4SystemOfUnits.hh"
+#include "Randomize.hh"
+#include <cmath>
+
+// Check carefully: Does this exact line exist?
+PrimaryGeneratorAction::PrimaryGeneratorAction() 
+: G4VUserPrimaryGeneratorAction(), fParticleGun(nullptr) 
+{
+    G4int n_particle = 1;
+    fParticleGun = new G4ParticleGun(n_particle);
+
+    // Default particle kinematics
+    auto particleTable = G4ParticleTable::GetParticleTable();
+    auto particle = particleTable->FindParticle("e-");
+    fParticleGun->SetParticleDefinition(particle);
+    fParticleGun->SetParticleEnergy(3.12*MeV);
+}
+
+PrimaryGeneratorAction::~PrimaryGeneratorAction() {
+    delete fParticleGun;
+}
+
+void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent) {
+    G4double z = -20*um;
+
+    G4double xpos = CLHEP::RandFlat::shoot(-17.6, 17.6) *mm;
+    G4double ypos = CLHEP::RandFlat::shoot(-19.2, 19.2) *mm;
+    
+    fParticleGun->SetParticlePosition(G4ThreeVector(xpos,ypos,z));
+    fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0.,0.,1.));
+    
+    //fParticleGun->SetParticlePosition(G4ThreeVector(x0, y0, z0));
+    fParticleGun->GeneratePrimaryVertex(anEvent);
+}
+
+</file>
+
+<file path="/sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix/src/DetectorConstruction.cc">
+#include "DetectorConstruction.hh"
+
+#include "G4RunManager.hh"
+#include "G4NistManager.hh"
+#include "G4Box.hh"
+#include "G4LogicalVolume.hh"
+#include "G4PVPlacement.hh"
+#include "G4SystemOfUnits.hh"
+#include "G4UserLimits.hh"
+
+DetectorConstruction::DetectorConstruction() : G4VUserDetectorConstruction() {}
+DetectorConstruction::~DetectorConstruction() {}
+
+G4VPhysicalVolume* DetectorConstruction::Construct() {
+    G4NistManager* nist = G4NistManager::Instance();
+    
+    // Materials
+    G4Material* world_mat = nist->FindOrBuildMaterial("G4_Galactic");
+    G4Material* pixel_mat = nist->FindOrBuildMaterial("G4_Si");
+
+    // World Volume
+    G4double world_size = 25*cm;
+    G4Box* solidWorld = new G4Box("World", world_size, world_size, world_size);
+    G4LogicalVolume* logicWorld = new G4LogicalVolume(solidWorld, world_mat, "World");
+    G4VPhysicalVolume* physWorld = new G4PVPlacement(0, G4ThreeVector(), logicWorld, "World", 0, false, 0);
+
+    // Each module's Volume (352*100*um x 384*100*um x 500um -> Half lengths: 50x50x250)
+    G4Box* solidPixel = new G4Box("Pixel", 50*um, 50*um, 225*um);
+    G4LogicalVolume* logicPixel = new G4LogicalVolume(solidPixel, pixel_mat, "Pixel");
+
+    //========================================
+    G4Region* pixelRegion = new G4Region("PixelRegion");
+    logicPixel->SetRegion(pixelRegion);
+    G4UserLimits* pixelStepLimit = new G4UserLimits(16 * um);
+    pixelRegion->SetUserLimits(pixelStepLimit);
+    //========================================
+    // 2D Array Loop (4x4)
+    
+    for (G4int i = -176; i < 176; i++) {
+        for (G4int j = -192; j < 192; j++) {
+            G4double xPos = (i + 0.5) * 100.0*um;
+            G4double yPos = (j + 0.5) * 100.0*um;
+            new G4PVPlacement(0, G4ThreeVector(xPos, yPos, 0), logicPixel, "Module", logicWorld, false, i*176 + j);
+        }
+    }
+
+    return physWorld;
+}
+
+</file>
+
+<file path="/sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix/src/EventAction.cc">
+#include "EventAction.hh"
+#include "RunAction.hh"
+#include "G4AnalysisManager.hh"
+#include "G4Event.hh"
+#include <iostream>
+#include <fstream>
+
+EventAction::EventAction(RunAction* runAction) : G4UserEventAction(), fRunAction(runAction), fTotalEdep(0.) {}
+EventAction::~EventAction() {}
+
+void EventAction::BeginOfEventAction(const G4Event*) {
+    fRunAction->ResetEdep();
+    fTotalEdep=0;
+}
+
+void EventAction::EndOfEventAction(const G4Event*) {
+    G4int eventID = event->GetEventID();
+    
+    auto analysisManager = G4AnalysisManager::Instance();
+    G4double totalEdep = 0.;
+
+    // Fill EdepHeatMap (H2 ID 0)
+    for (const auto& h : fRunAction->GetHits()) {
+        analysisManager->FillH2(0, h.x, h.y, h.edep);
+        totalEdep += h.edep;
+    }
+
+    if (totalEdep > 0.) {
+        analysisManager->FillH1(0, totalEdep);
+    }
+
+    // Fill HitsHeatMap (H2 ID 1) — one entry per primary electron
+    for (const auto& sh : fRunAction->GetSurfaceHits()) {
+        analysisManager->FillH2(1, sh.x, sh.y, 1.0);
+    }
+    //============================================================
+    G4int eventID = event->GetEventID();
+
+    // Write per-pixel deposits to CSV (or use ROOT ntuples)
+    static std::ofstream outFile("pixel_deposits.csv", std::ios::app);
+    static bool headerWritten = false;
+    if (!headerWritten) {
+        outFile << "eventID,pixX,pixY,edep_MeV\n";
+        headerWritten = true;
+    }
+
+    for (const auto& [pixel, edep] : fPixelEdepMap) {
+        outFile << eventID << ","
+                << pixel.first << ","
+                << pixel.second << ","
+                << edep << "\n";  // edep already in MeV
+    }
+
+    // Also store total per-electron energy for validation
+    fTotalEdep = 0.;
+    for (const auto& [pixel, edep] : fPixelEdepMap) {
+        fTotalEdep += edep;
+    }
+
+    // Optional: fill a histogram with total energy per electron
+    auto analysisManager = G4AnalysisManager::Instance();
+    analysisManager->FillH1(0, fTotalEdep);  // Should give Landau ~0.13 MeV
+    //============================================================
+    
+}
+</file>
+
+<file path="/sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix/src/.ipynb_checkpoints/DetectorConstruction-checkpoint.cc">
+#include "DetectorConstruction.hh"
+
+#include "G4RunManager.hh"
+#include "G4NistManager.hh"
+#include "G4Box.hh"
+#include "G4LogicalVolume.hh"
+#include "G4PVPlacement.hh"
+#include "G4SystemOfUnits.hh"
+#include "G4UserLimits.hh"
+
+DetectorConstruction::DetectorConstruction() : G4VUserDetectorConstruction() {}
+DetectorConstruction::~DetectorConstruction() {}
+
+G4VPhysicalVolume* DetectorConstruction::Construct() {
+    G4NistManager* nist = G4NistManager::Instance();
+    
+    // Materials
+    G4Material* world_mat = nist->FindOrBuildMaterial("G4_Galactic");
+    G4Material* pixel_mat = nist->FindOrBuildMaterial("G4_Si");
+
+    // World Volume
+    G4double world_size = 25*cm;
+    G4Box* solidWorld = new G4Box("World", world_size, world_size, world_size);
+    G4LogicalVolume* logicWorld = new G4LogicalVolume(solidWorld, world_mat, "World");
+    G4VPhysicalVolume* physWorld = new G4PVPlacement(0, G4ThreeVector(), logicWorld, "World", 0, false, 0);
+
+    // Each module's Volume (352*100*um x 384*100*um x 500um -> Half lengths: 50x50x250)
+    G4Box* solidPixel = new G4Box("Pixel", 50*um, 50*um, 225*um);
+    G4LogicalVolume* logicPixel = new G4LogicalVolume(solidPixel, pixel_mat, "Pixel");
+
+    //========================================
+    G4Region* pixelRegion = new G4Region("PixelRegion");
+    logicPixel->SetRegion(pixelRegion);
+    G4UserLimits* pixelStepLimit = new G4UserLimits(16 * um);
+    pixelRegion->SetUserLimits(pixelStepLimit);
+    //========================================
+    // 2D Array Loop (4x4)
+    
+    for (G4int i = -176; i < 176; i++) {
+        for (G4int j = -192; j < 192; j++) {
+            G4double xPos = (i + 0.5) * 100.0*um;
+            G4double yPos = (j + 0.5) * 100.0*um;
+            new G4PVPlacement(0, G4ThreeVector(xPos, yPos, 0), logicPixel, "Module", logicWorld, false, i*176 + j);
+        }
+    }
+
+    return physWorld;
+}
+
+</file>
+
+<file path="/sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix/src/.ipynb_checkpoints/ActionInitialization-checkpoint.cc">
+#include "ActionInitialization.hh"
+#include "PrimaryGeneratorAction.hh"
+#include "RunAction.hh"
+#include "EventAction.hh"
+#include "SteppingAction.hh"
+
+ActionInitialization::ActionInitialization() : G4VUserActionInitialization() {}
+ActionInitialization::~ActionInitialization() {}
+
+void ActionInitialization::BuildForMaster() const {
+    SetUserAction(new RunAction);
+}
+
+void ActionInitialization::Build() const {
+    RunAction* runAction = new RunAction;
+    SetUserAction(runAction);
+    SetUserAction(new EventAction(runAction)); // Register EventAction
+    SetUserAction(new PrimaryGeneratorAction);
+    SetUserAction(new SteppingAction(runAction));
+}
+
+</file>
+
+<file path="/sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix/src/.ipynb_checkpoints/PrimaryGeneratorAction-checkpoint.cc">
+#include "PrimaryGeneratorAction.hh"
+#include "G4ParticleGun.hh"
+#include "G4ParticleTable.hh"
+#include "G4ParticleDefinition.hh"
+#include "G4SystemOfUnits.hh"
+#include "Randomize.hh"
+#include <cmath>
+
+// Check carefully: Does this exact line exist?
+PrimaryGeneratorAction::PrimaryGeneratorAction() 
+: G4VUserPrimaryGeneratorAction(), fParticleGun(nullptr) 
+{
+    G4int n_particle = 1;
+    fParticleGun = new G4ParticleGun(n_particle);
+
+    // Default particle kinematics
+    auto particleTable = G4ParticleTable::GetParticleTable();
+    auto particle = particleTable->FindParticle("e-");
+    fParticleGun->SetParticleDefinition(particle);
+    fParticleGun->SetParticleEnergy(3.12*MeV);
+}
+
+PrimaryGeneratorAction::~PrimaryGeneratorAction() {
+    delete fParticleGun;
+}
+
+void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent) {
+    G4double z = -20*um;
+
+    G4double xpos = CLHEP::RandFlat::shoot(-17.6, 17.6) *mm;
+    G4double ypos = CLHEP::RandFlat::shoot(-19.2, 19.2) *mm;
+    
+    fParticleGun->SetParticlePosition(G4ThreeVector(xpos,ypos,z));
+    fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0.,0.,1.));
+    
+    //fParticleGun->SetParticlePosition(G4ThreeVector(x0, y0, z0));
+    fParticleGun->GeneratePrimaryVertex(anEvent);
+}
+
+</file>
+
+<file path="/sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix/src/.ipynb_checkpoints/EventAction-checkpoint.cc">
+#include "EventAction.hh"
+#include "RunAction.hh"
+#include "G4AnalysisManager.hh"
+#include "G4Event.hh"
+#include <iostream>
+#include <fstream>
+
+EventAction::EventAction(RunAction* runAction) : G4UserEventAction(), fRunAction(runAction), fTotalEdep(0.) {}
+EventAction::~EventAction() {}
+
+void EventAction::BeginOfEventAction(const G4Event*) {
+    fRunAction->ResetEdep();
+    fTotalEdep=0;
+}
+
+void EventAction::EndOfEventAction(const G4Event*) {
+    G4int eventID = event->GetEventID();
+    
+    auto analysisManager = G4AnalysisManager::Instance();
+    G4double totalEdep = 0.;
+
+    // Fill EdepHeatMap (H2 ID 0)
+    for (const auto& h : fRunAction->GetHits()) {
+        analysisManager->FillH2(0, h.x, h.y, h.edep);
+        totalEdep += h.edep;
+    }
+
+    if (totalEdep > 0.) {
+        analysisManager->FillH1(0, totalEdep);
+    }
+
+    // Fill HitsHeatMap (H2 ID 1) — one entry per primary electron
+    for (const auto& sh : fRunAction->GetSurfaceHits()) {
+        analysisManager->FillH2(1, sh.x, sh.y, 1.0);
+    }
+    //============================================================
+    G4int eventID = event->GetEventID();
+
+    // Write per-pixel deposits to CSV (or use ROOT ntuples)
+    static std::ofstream outFile("pixel_deposits.csv", std::ios::app);
+    static bool headerWritten = false;
+    if (!headerWritten) {
+        outFile << "eventID,pixX,pixY,edep_MeV\n";
+        headerWritten = true;
+    }
+
+    for (const auto& [pixel, edep] : fPixelEdepMap) {
+        outFile << eventID << ","
+                << pixel.first << ","
+                << pixel.second << ","
+                << edep << "\n";  // edep already in MeV
+    }
+
+    // Also store total per-electron energy for validation
+    fTotalEdep = 0.;
+    for (const auto& [pixel, edep] : fPixelEdepMap) {
+        fTotalEdep += edep;
+    }
+
+    // Optional: fill a histogram with total energy per electron
+    auto analysisManager = G4AnalysisManager::Instance();
+    analysisManager->FillH1(0, fTotalEdep);  // Should give Landau ~0.13 MeV
+    //============================================================
+    
+}
+</file>
+
+<file path="/sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix/src/.ipynb_checkpoints/SteppingAction-checkpoint.cc">
+#include "SteppingAction.hh"
+#include "RunAction.hh"
+#include "G4Step.hh"
+#include "G4Track.hh"
+#include "G4RunManager.hh"
+#include "G4SystemOfUnits.hh"
+
+void SteppingAction::UserSteppingAction(const G4Step* step) {
+    auto volume = step->GetPreStepPoint()->GetTouchableHandle()->GetVolume();
+    if (!volume) return;
+    if (volume->GetName() != "Module") return;
+
+    //========================================
+    G4double stepSize = step->GetStepLength(); 
+    
+    // Convert to mm for readable output
+    G4cout << "Step size: " << stepSize / mm << " mm" << G4endl; 
+    //========================================
+    
+    G4int trackId = step->GetTrack()->GetTrackID();
+
+    // --- 1. Energy deposition (H2 ID 0) ---
+    G4double edep = step->GetTotalEnergyDeposit();
+    if (edep > 0.) {
+        G4ThreeVector pre  = step->GetPreStepPoint()->GetPosition();
+        G4ThreeVector post = step->GetPostStepPoint()->GetPosition();
+        G4ThreeVector pos  = 0.5 * (pre + post);
+        fRunAction->AddHit(pos.x(), pos.y(), edep, trackId);
+    }
+
+    // --- 2. Surface hit (H2 ID 1) — primary electrons only ---
+    // Only count the PRIMARY particle (the electron you shot)
+    if (step->GetTrack()->GetParentID() == 0) {
+        // Pre-step point of the FIRST step in this volume = surface position
+        // AddSurfaceHit internally ignores duplicate trackIds
+        G4ThreeVector surfPos = step->GetPreStepPoint()->GetPosition();
+        fRunAction->AddSurfaceHit(surfPos.x(), surfPos.y(), trackId);
+    }
+}
+</file>
+
+<file path="/sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix/src/.ipynb_checkpoints/RunAction-checkpoint.cc">
+#include "RunAction.hh"
+#include "G4AnalysisManager.hh"
+#include "G4SystemOfUnits.hh"
+
+RunAction::RunAction() : G4UserRunAction() {
+    auto analysisManager = G4AnalysisManager::Instance();
+    analysisManager->SetNtupleMerging(true);
+
+    // H1 ID 0: Total energy deposition per event
+    analysisManager->CreateH1("PixelEdep", "Energy Deposition per Event", 3120, 0., 3.12*MeV);
+
+    // H2 ID 0: 2D Map of energy deposition
+    analysisManager->CreateH2("EdepHeatMap", "Spatial Edep",
+                         352, -176*100*um, 176*100*um,
+                         384, -192*100*um, 192*100*um);
+
+    // H2 ID 1: 2D Map of electron surface hits (ground truth labels)
+    analysisManager->CreateH2("HitsHeatMap", "Electron Surface Hits",
+                         352, -176*100*um, 176*100*um,
+                         384, -192*100*um, 192*100*um);
+}
+
+RunAction::~RunAction() {}
+
+void RunAction::BeginOfRunAction(const G4Run*) {
+    auto analysisManager = G4AnalysisManager::Instance();
+    analysisManager->SetDefaultFileType("root");   
+    analysisManager->OpenFile();  
+}
+
+void RunAction::EndOfRunAction(const G4Run*) {
+    auto analysisManager = G4AnalysisManager::Instance();
+    analysisManager->Write();
+    analysisManager->CloseFile();
+}
+</file>
+
+<file path="/sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix/include/RunAction.hh">
+#ifndef RunAction_h
+#define RunAction_h 1
+#include "G4UserRunAction.hh"
+#include "globals.hh"
+#include <vector>
+#include <set>
+
+class RunAction : public G4UserRunAction {
+  public:
+    struct Hit { G4double x; G4double y; G4double edep; G4int trackId; };
+    struct SurfaceHit { G4double x; G4double y; G4int trackId; };
+
+    RunAction();
+    virtual ~RunAction();
+    virtual void BeginOfRunAction(const G4Run*);
+    virtual void EndOfRunAction(const G4Run*);
+
+    void AddHit(G4double x, G4double y, G4double edep, G4int trackId) {
+        fHits.push_back({x, y, edep, trackId});
+    }
+    const std::vector<Hit>& GetHits() const { return fHits; }
+
+    // Only records the FIRST call per trackId (i.e., the surface entry point)
+    void AddSurfaceHit(G4double x, G4double y, G4int trackId) {
+        if (fRecordedTracks.find(trackId) == fRecordedTracks.end()) {
+            fSurfaceHits.push_back({x, y, trackId});
+            fRecordedTracks.insert(trackId);
+        }
+    }
+    const std::vector<SurfaceHit>& GetSurfaceHits() const { return fSurfaceHits; }
+
+    void ResetEdep() {
+        fHits.clear();
+        fSurfaceHits.clear();
+        fRecordedTracks.clear();
+    }
+
+  private:
+    std::vector<Hit> fHits;
+    std::vector<SurfaceHit> fSurfaceHits;
+    std::set<G4int> fRecordedTracks;  // tracks already recorded this event
+};
+#endif
+</file>
+
+<file path="/sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix/include/DetectorConstruction.hh">
+#ifndef DetectorConstruction_h
+#define DetectorConstruction_h 1
+
+#include "G4VUserDetectorConstruction.hh"
+#include "globals.hh"
+
+class G4VPhysicalVolume;
+class G4LogicalVolume;
+
+class DetectorConstruction : public G4VUserDetectorConstruction {
+  public:
+    DetectorConstruction();
+    virtual ~DetectorConstruction();
+    virtual G4VPhysicalVolume* Construct();
+};
+
+#endif
+
+</file>
+
+<file path="/sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix/include/EventAction.hh">
+#ifndef EventAction_h
+#define EventAction_h 1
+
+#include "G4UserEventAction.hh"
+#include "globals.hh"
+#include <map>
+#include <vector>
+#include <utility>
+
+class RunAction;
+
+class EventAction : public G4UserEventAction {
+  public:
+    EventAction(RunAction* runAction);
+    virtual ~EventAction();
+
+    virtual void BeginOfEventAction(const G4Event*);
+    virtual void EndOfEventAction(const G4Event*);
+
+    //========================================================
+    // Called by SteppingAction to accumulate deposits
+    void AddPixelEdep(G4int pixX, G4int pixY, G4double edep);
+
+    // Accessors for output
+    const std::map<std::pair<int,int>, double>& GetPixelMap() const { return fPixelEdepMap; }
+    double GetTotalEdep() const { return fTotalEdep; }
+    //========================================================
+  private:
+    RunAction* fRunAction;
+
+    //========================================================
+    std::map<std::pair<int,int>, double> fPixelEdepMap;
+    double fTotalEdep;
+    //========================================================
+};
+
+#endif
+
+</file>
+
+<file path="/sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix/include/PrimaryGeneratorAction.hh">
+#ifndef PrimaryGeneratorAction_h
+#define PrimaryGeneratorAction_h 1
+
+#include "G4VUserPrimaryGeneratorAction.hh"
+#include "G4ParticleGun.hh"
+#include "globals.hh"
+
+class G4Event;
+
+class PrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction {
+  public:
+    PrimaryGeneratorAction();    
+    virtual ~PrimaryGeneratorAction();
+    virtual void GeneratePrimaries(G4Event*);         
+  
+  private:
+    G4ParticleGun* fParticleGun; 
+};
+
+#endif
+
+</file>
+
+<file path="/sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix/include/SteppingAction.hh">
+#ifndef SteppingAction_h
+#define SteppingAction_h 1
+#include "G4UserSteppingAction.hh"
+
+class RunAction;
+
+class SteppingAction : public G4UserSteppingAction {
+  public:
+    SteppingAction(RunAction* runAction) : G4UserSteppingAction(), fRunAction(runAction) {}
+    virtual ~SteppingAction() {}
+    virtual void UserSteppingAction(const G4Step*);
+  private:
+    RunAction* fRunAction;
+};
+#endif
+</file>
+
+<file path="/sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix/include/ActionInitialization.hh">
+#ifndef ActionInitialization_h
+#define ActionInitialization_h 1
+
+#include "G4VUserActionInitialization.hh"
+
+class ActionInitialization : public G4VUserActionInitialization {
+  public:
+    ActionInitialization();
+    virtual ~ActionInitialization();
+
+    virtual void BuildForMaster() const;
+    virtual void Build() const;
+};
+
+#endif
+
+</file>
+
+<file path="/sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix/include/.ipynb_checkpoints/DetectorConstruction-checkpoint.hh">
+#ifndef DetectorConstruction_h
+#define DetectorConstruction_h 1
+
+#include "G4VUserDetectorConstruction.hh"
+#include "globals.hh"
+
+class G4VPhysicalVolume;
+class G4LogicalVolume;
+
+class DetectorConstruction : public G4VUserDetectorConstruction {
+  public:
+    DetectorConstruction();
+    virtual ~DetectorConstruction();
+    virtual G4VPhysicalVolume* Construct();
+};
+
+#endif
+
+</file>
+
+<file path="/sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix/include/.ipynb_checkpoints/SteppingAction-checkpoint.hh">
+#ifndef SteppingAction_h
+#define SteppingAction_h 1
+#include "G4UserSteppingAction.hh"
+
+class RunAction;
+
+class SteppingAction : public G4UserSteppingAction {
+  public:
+    SteppingAction(RunAction* runAction) : G4UserSteppingAction(), fRunAction(runAction) {}
+    virtual ~SteppingAction() {}
+    virtual void UserSteppingAction(const G4Step*);
+  private:
+    RunAction* fRunAction;
+};
+#endif
+</file>
+
+<file path="/sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix/include/.ipynb_checkpoints/ActionInitialization-checkpoint.hh">
+#ifndef ActionInitialization_h
+#define ActionInitialization_h 1
+
+#include "G4VUserActionInitialization.hh"
+
+class ActionInitialization : public G4VUserActionInitialization {
+  public:
+    ActionInitialization();
+    virtual ~ActionInitialization();
+
+    virtual void BuildForMaster() const;
+    virtual void Build() const;
+};
+
+#endif
+
+</file>
+
+<file path="/sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix/include/.ipynb_checkpoints/PrimaryGeneratorAction-checkpoint.hh">
+#ifndef PrimaryGeneratorAction_h
+#define PrimaryGeneratorAction_h 1
+
+#include "G4VUserPrimaryGeneratorAction.hh"
+#include "G4ParticleGun.hh"
+#include "globals.hh"
+
+class G4Event;
+
+class PrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction {
+  public:
+    PrimaryGeneratorAction();    
+    virtual ~PrimaryGeneratorAction();
+    virtual void GeneratePrimaries(G4Event*);         
+  
+  private:
+    G4ParticleGun* fParticleGun; 
+};
+
+#endif
+
+</file>
+
+<file path="/sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix/include/.ipynb_checkpoints/RunAction-checkpoint.hh">
+#ifndef RunAction_h
+#define RunAction_h 1
+#include "G4UserRunAction.hh"
+#include "globals.hh"
+#include <vector>
+#include <set>
+
+class RunAction : public G4UserRunAction {
+  public:
+    struct Hit { G4double x; G4double y; G4double edep; G4int trackId; };
+    struct SurfaceHit { G4double x; G4double y; G4int trackId; };
+
+    RunAction();
+    virtual ~RunAction();
+    virtual void BeginOfRunAction(const G4Run*);
+    virtual void EndOfRunAction(const G4Run*);
+
+    void AddHit(G4double x, G4double y, G4double edep, G4int trackId) {
+        fHits.push_back({x, y, edep, trackId});
+    }
+    const std::vector<Hit>& GetHits() const { return fHits; }
+
+    // Only records the FIRST call per trackId (i.e., the surface entry point)
+    void AddSurfaceHit(G4double x, G4double y, G4int trackId) {
+        if (fRecordedTracks.find(trackId) == fRecordedTracks.end()) {
+            fSurfaceHits.push_back({x, y, trackId});
+            fRecordedTracks.insert(trackId);
+        }
+    }
+    const std::vector<SurfaceHit>& GetSurfaceHits() const { return fSurfaceHits; }
+
+    void ResetEdep() {
+        fHits.clear();
+        fSurfaceHits.clear();
+        fRecordedTracks.clear();
+    }
+
+  private:
+    std::vector<Hit> fHits;
+    std::vector<SurfaceHit> fSurfaceHits;
+    std::set<G4int> fRecordedTracks;  // tracks already recorded this event
+};
+#endif
+</file>
+
+<file path="/sdf/home/d/dhruvshr/ePix_Simulation/Examples/PixelSim_ePix/include/.ipynb_checkpoints/EventAction-checkpoint.hh">
+#ifndef EventAction_h
+#define EventAction_h 1
+
+#include "G4UserEventAction.hh"
+#include "globals.hh"
+#include <map>
+#include <vector>
+#include <utility>
+
+class RunAction;
+
+class EventAction : public G4UserEventAction {
+  public:
+    EventAction(RunAction* runAction);
+    virtual ~EventAction();
+
+    virtual void BeginOfEventAction(const G4Event*);
+    virtual void EndOfEventAction(const G4Event*);
+
+    //========================================================
+    // Called by SteppingAction to accumulate deposits
+    void AddPixelEdep(G4int pixX, G4int pixY, G4double edep);
+
+    // Accessors for output
+    const std::map<std::pair<int,int>, double>& GetPixelMap() const { return fPixelEdepMap; }
+    double GetTotalEdep() const { return fTotalEdep; }
+    //========================================================
+  private:
+    RunAction* fRunAction;
+
+    //========================================================
+    std::map<std::pair<int,int>, double> fPixelEdepMap;
+    double fTotalEdep;
+    //========================================================
+};
+
+#endif
+
+</file>
+

@@ -1,0 +1,140 @@
+import uproot
+import matplotlib.pyplot as plt
+import numpy as np
+import mplhep as mplhep
+from pathlib import Path
+from scipy.ndimage import gaussian_filter,gaussian_filter1d
+import os,sys
+sys.path.append('/sdf/data/lcls/ds/ued_testfac/scratch/python_packages')
+from ued_LCLSII_DAQ_utilities import *
+
+sparse_sim_data=np.zeros((20,500))
+sparse_sim_bins=np.linspace(0,1,501) * 1000
+num_jobs = 20
+num_elecs_arr = np.arange(1000,21000,1000)
+edep_maps = [[] for i in range(20)]
+
+for i, num_elecs in enumerate(num_elecs_arr):
+    for run_num in range(1,num_jobs + 1):
+        sim_filename = f"/sdf/home/d/dhruvshr/SULI2026/ePix_Simulation/Examples/PixelSim_ePix_Data_Gen/outputs/sim_{num_elecs}_e-_run_{run_num:03d}.root"
+        sim_file = uproot.open(sim_filename)
+        sparse_sim_data[i] += sim_file["TotalEdep"].to_numpy()[0]
+        edep_maps[i].append(sim_file["EdepMap"].to_numpy()[0])
+
+NOISE_FACTOR = 0.13
+EDEP_SHIFT = -12
+BASE_NOISE = 10.0
+
+def digitize(edep_MeV):
+    edep_MeV_new = edep_MeV + EDEP_SHIFT
+    noise = np.random.normal(loc=0.0, scale=1.0, size=edep_MeV_new.shape)
+    return edep_MeV_new + (edep_MeV_new * NOISE_FACTOR * noise) # + np.random.normal(0,BASE_NOISE,size=edep_MeV.shape)
+
+digi_edep_maps = [digitize(edep_map) for edep_map in edep_maps[0]]
+
+# Define some trial peak finding parameters
+max_electrons = 1000  # Max number of electrons the peakFinder allowed to find
+threshold     = 40    # Threshold for peak finding, pixel intensity below this is filtered
+min_signal    = 100   # Min intensity to be considered as electron signal
+
+num_droplets = 0
+xs = []
+ys = []
+droplet_edeps = []
+droplet_sizes = []
+
+for job_num in range(20):
+    digi_edep_map = digi_edep_maps[job_num]
+    n, x, y, edep, size = blobCounter(digi_edep_map, threshold, min_signal)
+    num_droplets += n
+    xs.append(x)
+    ys.append(y)
+    droplet_edeps += list(edep)
+    droplet_sizes += list(size)
+
+def get_hist_mean(hist):
+    counts, edges = hist[0], hist[1]
+    bin_centers = (edges[:-1] + edges[1:]) / 2
+    mean = np.average(bin_centers, weights=counts)
+    return mean
+
+def get_exp_data(run, is_sparse):
+    if (is_sparse):
+        exp_py = np.load('../../../ePix_Analysis/catalog/Intensity_evts_run_'+str(run)+'_sparse.npy')
+    else:
+        exp_py = np.load('../../../ePix_Analysis/catalog/Intensity_evts_run_'+str(run)+'_dense.npy')
+    bins_intn=np.arange(80,1000,5)
+    all_counts = []
+    for i_mdl in range(4):
+        hist_intn, bin_edges = np.histogram(exp_py[:,i_mdl,:].flatten(), bins=bins_intn)
+        all_counts.append(hist_intn)
+    exp_counts = np.mean(np.array(all_counts), axis=0)
+    return exp_counts
+
+exp_126 = get_exp_data(126,True)
+exp_126_dense = get_exp_data(126,False)
+exp_bins = np.linspace(80,995,184)[:-1]
+
+bins = np.linspace(0,2000,500)
+counts,_ = np.histogram(droplet_edeps,bins=bins)
+match_peak = max(counts)
+ratio = max(exp_126) / match_peak
+plt.stairs(counts * ratio, bins, label=f"Conv Sim Data")
+
+plt.plot(exp_bins,exp_126, label='Exp Data (Sparse)')
+
+plt.xlabel("Energy Deposition (keV)")
+plt.ylabel("Counts (# Droplets)")
+plt.suptitle(r"$\bf{Experimental\ vs\ Convolved\ Simulated\ Edeps\ (Sparse\ Case)}$")
+plt.title(f"Sim Data{EDEP_SHIFT}, Conv with {NOISE_FACTOR*100}% Signal-Dep Noise"
+#          + f" with {BASE_NOISE} keV Base Noise (Signal Indep)"
+         )
+#if BASE_NOISE != 0:
+    
+#plt.title(f"Rescaled to Match Peaks, {bin_shift} keV sim shift, {detector_noise} keV Gaussian Conv")
+plt.legend()
+plt.xlim(0,1000)
+plt.tight_layout()
+
+digi_edep_maps_dense = [digitize(edep_map) for edep_map in edep_maps[4]]
+
+# Define some trial peak finding parameters
+max_electrons = 1000  # Max number of electrons the peakFinder allowed to find
+threshold     = 40    # Threshold for peak finding, pixel intensity below this is filtered
+min_signal    = 100   # Min intensity to be considered as electron signal
+
+num_droplets_dense = 0
+xs_dense = []
+ys_dense = []
+droplet_edeps_dense = []
+droplet_sizes_dense = []
+
+for job_num in range(20):
+    digi_edep_map = digi_edep_maps_dense[job_num]
+    n, x, y, edep, size = blobCounter(digi_edep_map, threshold, min_signal)
+    num_droplets_dense += n
+    xs_dense.append(x)
+    ys_dense.append(y)
+    droplet_edeps_dense += list(edep)
+    droplet_sizes_dense += list(size)
+
+bins = np.linspace(0,2000,500)
+counts,_ = np.histogram(droplet_edeps_dense,bins=bins)
+match_peak = max(counts)
+ratio = max(exp_126_dense) / match_peak
+plt.stairs(counts * ratio, bins, label=f"Conv Sim Data")
+
+plt.plot(exp_bins,exp_126_dense, label='Exp Data (Sparse)')
+
+plt.xlabel("Energy Deposition (keV)")
+plt.ylabel("Counts (# Droplets)")
+plt.suptitle(r"$\bf{Experimental\ vs\ Convolved\ Simulated\ Edeps\ (Sparse\ Case)}$")
+plt.title(f"Sim Data{EDEP_SHIFT}, Conv with {NOISE_FACTOR*100}% Signal-Dep Noise"
+#          + f" with {BASE_NOISE} keV Base Noise (Signal Indep)"
+         )
+#if BASE_NOISE != 0:
+    
+#plt.title(f"Rescaled to Match Peaks, {bin_shift} keV sim shift, {detector_noise} keV Gaussian Conv")
+plt.legend()
+plt.xlim(0,1000)
+plt.tight_layout()
